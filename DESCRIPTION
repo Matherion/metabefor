@@ -1,0 +1,14 @@
+Package: metabefor
+Type: Package
+Title: Facilitating systematic review and meta-analyses
+Version: 0.1-1
+Date: 2014-05-10
+Author: Gjalt-Jorn Peters
+Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
+Description: The metabefor package is intended to assist with
+             efficient, transparent, and traceable query generation,
+             screening and data extraction for systematic reviews
+             and meta-analyses.
+License: GPL (>= 2)
+URL: http://userfriendlyscience.com?metabefor
+Imports: plyr, xtable
