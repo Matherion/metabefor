@@ -3,3 +3,4 @@ exportPattern("^[[:alpha:]]+");
 importFrom('plyr', 'rbind.fill');
 
 importFrom('xtable', 'xtable');
+

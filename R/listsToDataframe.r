@@ -3,13 +3,13 @@ listsToDataframe <- function(listOfLists, identifierColumnPattern = "variable",
   ### Create dataframe to return results
   res <- data.frame();
 
-  if (progress) pBar <- txtProgressBar(style=3,
-                                       max = length(listOfLists));
-  
+  if (progress && interactive()) pBar <- txtProgressBar(style=3,
+                                                        max = length(listOfLists));
+
   ### Loop through the elements of the list
   ### (associations, univariate data, or variables)
   for (currentList in 1:length(listOfLists)) {
-    if (progress) setTxtProgressBar(pBar, currentList);
+    if (progress && interactive()) setTxtProgressBar(pBar, currentList);
     ### Loop through the values making up each element
     for (currentValue in names(listOfLists[[currentList]])) {
       ### If this is a single value, store it in the dataframe
@@ -32,7 +32,7 @@ listsToDataframe <- function(listOfLists, identifierColumnPattern = "variable",
     ### Add 'listsToDataframe' to class for correct printing method
     class(res) <- c(class(res), 'listsToDataframe');
   }
-  
+
   ### Return result
   return(res);
 }

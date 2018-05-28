@@ -1,26 +1,26 @@
 interpretRISlike <- function(referenceList, exportSource="ris", interpretationDictionary=NULL,
                              progress = TRUE) {
-  
+
   ### Check class of first argument
   if (!(class(referenceList) == "sysrev reference list")) {
     stop("interpretRISlike can only interpret sysrev reference list objects; the class of the object ",
          "you provided is '", class(referenceList), "'.");
   }
-  
+
   ### Set default RIS dictionary (based on https://en.wikipedia.org/wiki/RIS_%28file_format%29)
   if (is.null(interpretationDictionary)) {
     if (exportSource == 'ris') {
       interpretationDictionary <- matrix(c("TY",       "type",
-                                           
+
                                            "AU",       "author",
                                            "A1",       "author",
                                            "A2",       "author.secondary",
                                            "A3",       "author.tertairy",
                                            "A4",       "author.subsidiary",
-                                           
+
                                            "AB",       "abstract",
                                            "N2",       "abstract",
-                                           
+
                                            "AD",       "address.author",
                                            "AN",       "number.accession",
                                            "C(\\d)",   "custom.\\1",
@@ -35,13 +35,13 @@ interpretRISlike <- function(referenceList, exportSource="ris", interpretationDi
                                            "ET",       "edition",
                                            "IS",       "issue",
                                            "ID",       "id.record",
-                                           
+
                                            "J2",       "title.alternate",
                                            "JF",       "journal",
                                            "JA",       "journal.abbreviated",
-                                           
+
                                            "K(\\d|W)", "keywords",
-                                           
+
                                            "L1",       "attached.file.local",
                                            "L2",       "url.ovid",
                                            "L4",       "attached.figure.local",
@@ -53,35 +53,35 @@ interpretRISlike <- function(referenceList, exportSource="ris", interpretationDi
                                            "NV",       "volumes.numberof",
                                            "OP",       "publication.original",
                                            "PB",       "publisher",
-                                           
+
                                            "(PY|Y1)",  "year",
-                                           
+
                                            "RI",       "item.reviewed",
                                            "RN",       "notes.research",
                                            "RP",       "edition.reprint",
                                            "SE",       "section",
                                            "SN",       "number.serial",
                                            "SP",       "page.start",
-                                           
+
                                            "ST",       "title.short",
                                            "TI",       "title",
                                            "T1",       "title",
                                            "T2",       "title.secundary",
                                            "T3",       "title.tertairy",
                                            "TT",       "title.translated",
-                                           
+
                                            "TA",       "author.translated",
                                            "UR",       "url",
-                                           
+
                                            "VL",       "volume",
-                                           
+
                                            "Y2",       "date.accessed"
       ),
       ncol=2, byrow=TRUE);
     }
     else if (exportSource == 'medline') {
       interpretationDictionary <- matrix(c("PMID",     "id.pubmed",
-                                           
+
                                            "OWN",      "owner",
                                            "STAT",     "status",
                                            "DA",       "date",
@@ -109,7 +109,7 @@ interpretRISlike <- function(referenceList, exportSource="ris", interpretationDi
       stop("Unknown exportSource specified!");
     }
     colnames(interpretationDictionary) <- c('tag', 'field');
-    interpretationDictionary <- as.data.frame(interpretationDictionary, stringsAsFactors=FALSE);    
+    interpretationDictionary <- as.data.frame(interpretationDictionary, stringsAsFactors=FALSE);
   }
 
   ### Generate object to return results
@@ -117,15 +117,15 @@ interpretRISlike <- function(referenceList, exportSource="ris", interpretationDi
               output = list());
 
   cat0("\nInterpreting references...\n\n");
-  
-  if (progress) pBar <- txtProgressBar(style=3,
-                                       max = length(referenceList));
-  
+
+  if (progress && interactive()) pBar <- txtProgressBar(style=3,
+                                                        max = length(referenceList));
+
   ### Loop through records, and convert each tag to the field name
   ### according to the interpretation dictionary
   res$output$recordList <- list();
   for (currentReference in seq_along(referenceList)) {
-    if (progress) setTxtProgressBar(pBar, currentReference);
+    if (progress && interactive()) setTxtProgressBar(pBar, currentReference);
     res$output$recordList[[currentReference]] <- list();
     for (currentField in seq_along(referenceList[[currentReference]])) {
       ### Match regular expressions, store match
@@ -154,7 +154,7 @@ interpretRISlike <- function(referenceList, exportSource="ris", interpretationDi
       }
     }
   }
-  
+
   class(res) <- "sysrev interpreted reference list";
   return(res);
 }

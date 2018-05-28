@@ -2,9 +2,9 @@ importRISlike <- function(filename, hasBOM = FALSE,
                           encoding=NULL,
                           convertFromUTF = TRUE,
                           silent = FALSE, ...) {
-  
+
   if (!silent) cat0("Reading file '", filename, "'...\n");
-  
+
   ### Read lines from bibtex file
   if (hasBOM) {
     con <- file(filename, "r", encoding="UTF-8-BOM");
@@ -19,39 +19,40 @@ importRISlike <- function(filename, hasBOM = FALSE,
     sourceLines <- readLines(con,  ..., encoding=encoding);
   }
   close(con);
-  
+
   ### Sometimes, reading the firstline using hasBOM does not work. In those
   ### situations, the three characters together forming the Byte Order Mark
   ### are still present in the first line. Make sure they're removed before
   ### we convert to UTF-8.
   sourceLines[1] <- sub(".*(TY  - .*)", "\\1", sourceLines[1]);
-  
+
   ### Convert to UTF-8
   if (convertFromUTF) {
     sourceLines <- iconv(sourceLines, from="UTF-8");
   }
-  
+
   ### Generate object to return
   res <- list(input = list(filename = filename,
                            encoding = encoding),
               intermediate = list(sourceLines = sourceLines),
               output = list());
-  
+
   if (!silent) cat0("Read ", length(sourceLines), " lines.\n");
-  
+
   ### The Ebcohost output may start with some weird symbols.
   ### If the first line contains "TY  - ", delete everything in front of it.
   sourceLines[1] <- sub(".*(TY  - .*)", "\\1", sourceLines[1]);
-  
+
   res$intermediate$firstLinesOfRecords <- grep("^TY", sourceLines);
   #res$intermediate$lastLinesOfRecords <- grep("^ER", sourceLines) - 1;
   res$intermediate$exportSource <- 'ris';
 
   if (!silent) {
-    cat0("Extracted ", length(res$intermediate$firstLinesOfRecords), " lines matching regex '^TY' (regular RIS start of record).\n");
+    cat0("Extracted ", length(res$intermediate$firstLinesOfRecords),
+         " lines matching regex '^TY' (regular RIS start of record).\n");
     #cat0("Extracted ", length(res$intermediate$lastLinesOfRecords), " lines matching regex '^ER' (regular RIS end of record).\n");
   }
-  
+
   if (length(res$intermediate$firstLinesOfRecords) == 0) {
     ### No RIS record opening or closing tags. This might be a pubmed
     ### exported file (uses almost the same tag dictionary, but
@@ -59,13 +60,14 @@ importRISlike <- function(filename, hasBOM = FALSE,
     res$intermediate$firstLinesOfRecords <- grep("^PMID",sourceLines);
     #res$intermediate$lastLinesOfRecords <- grep("^SO",sourceLines);
     res$intermediate$exportSource <- 'medline';
-    
+
     if (!silent) {
       cat0("\nZero hits: looked for PubMed RIS export ('medline') markers:\n");
-      cat0("Extracted ", length(res$intermediate$firstLinesOfRecords), " lines matching regex '^PMID' (PubMed RIS start of record).\n");
+      cat0("Extracted ", length(res$intermediate$firstLinesOfRecords),
+           " lines matching regex '^PMID' (PubMed RIS start of record).\n");
       #cat0("Extracted ", length(res$intermediate$lastLinesOfRecords), " lines matching regex '^SO' (PubMed RIS end of record).\n");
     }
-    
+
     if (length(res$intermediate$firstLinesOfRecords) == 0) {
       ### Still nothing? Abort.
       stop("The specified textfile ('", filename, "') does not seem to ",
@@ -78,7 +80,7 @@ importRISlike <- function(filename, hasBOM = FALSE,
   res$intermediate$lastLinesOfRecords <-
     c(res$intermediate$firstLinesOfRecords[2:length(res$intermediate$firstLinesOfRecords)] - 2,
       length(sourceLines));
-  
+
   if (!silent) cat0("\nExtracting references...\n\n");
 
   res$intermediate$records <-
@@ -89,23 +91,23 @@ importRISlike <- function(filename, hasBOM = FALSE,
         res$intermediate$firstLinesOfRecords[index]:res$intermediate$lastLinesOfRecords[index]
         ]);
     return(res);
-  }, .progress='text');
+  }, .progress=ifelse(interactive(), "text", "none"));
   ### Set correct class
   class(res$intermediate$records) <- "sysrev reference list";
-  
+
   ### Interpret RIS or MEDLINE fields
   res$intermediate$interpretedRecords <- interpretRISlike(res$intermediate$records,
                                                           exportSource=res$intermediate$exportSource);
-  
+
   if (!silent) cat0("\nConverting references to dataframe...\n\n");
-  
+
   res$output$records <-
     listsToDataframe(res$intermediate$interpretedRecords$output$recordList,
                      identifierColumnPattern = NULL, progress=TRUE);
-  
+
   class(res) <- 'sysrev reference list';
   return(res);
-  
+
 }
 
 makeReference <- function(risLines) {
@@ -114,7 +116,7 @@ makeReference <- function(risLines) {
   ### that belong in one field, and return the result this in a
   ### list
   res <- list();
-  
+
   ### -- Note - we can no longer do this, if we also want to
   ###    be able to read the pubmed 'medline' exports!
   #   ### Split field tags and content on each line
@@ -127,11 +129,11 @@ makeReference <- function(risLines) {
   #   valuesVector <- unlist(lapply(fieldContentDyads, function(x) {
   #     return(x[2]);
   #   }));
-  
+
   fieldsVector <- c();
   valuesVector <- c();
   fieldNumber <- 0;
-  
+
   for (currentLine in 1:length(risLines)) {
     ### Check whether we're continuing the last field contents
     if (grepl("^      (.+)", risLines[currentLine])) {
@@ -147,10 +149,10 @@ makeReference <- function(risLines) {
     }
     ### Else do nothing!
   }
-  
+
   ### Generate a vector with all the fields we have
   presentFields <- unique(fieldsVector);
-  
+
   ### Loop through each field and collapse the values
   ### we have for that field
   for (currentField in presentFields) {
@@ -167,9 +169,9 @@ makeReference <- function(risLines) {
     }
     res[[currentField]] <- presentValues;
   }
-  
+
   ### Maybe pass result on and create bibentry objects?
-  
+
   return(res);
 }
 

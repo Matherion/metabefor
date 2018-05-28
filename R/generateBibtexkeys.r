@@ -1,13 +1,16 @@
-generateBibtexkeys <- function(dataframe, authorMinLength = 2) {
+generateBibtexkeys <- function(dataframe,
+                               authorMinLength = 2,
+                               prefix = NULL,
+                               suffix = NULL) {
   if (!is.data.frame(dataframe)) {
-    stop("generateBibtexkeys requires a dataframe, but instead, an object of class '", 
+    stop("generateBibtexkeys requires a dataframe, but instead, an object of class '",
          class(dataframe), "' is provided!");
   }
-  
+
   ### Convert all field names to lower case
   oldFieldNames <- names(dataframe);
   names(dataframe) <- tolower(names(dataframe));
-  
+
   ### Get author names, or a words from the title,
   ### for the first part of the bibtex keys
   if ('author' %in% names(dataframe)) {
@@ -23,7 +26,7 @@ generateBibtexkeys <- function(dataframe, authorMinLength = 2) {
     ### Get the first long word
     firstPartVector <- unlist(lapply(firstPartVector, getFirstLongWord));
   }
-  
+
   ### Get the year, or a word from the title, or from
   ### the abstract, as the second part
   if ('year' %in% names(dataframe)) {
@@ -46,10 +49,24 @@ generateBibtexkeys <- function(dataframe, authorMinLength = 2) {
     stop("Specified dataframe does not have an author field and at least a year, title, ",
          "or abstract field! Not able to construct BibTeX keys like this.");
   }
-  
+
   ### Combine the vectors
-  newKeys <- originalKeys <- paste0(trim(firstPartVector), trim(secondPartVector));
-  
+  newKeys <- originalKeys <-
+    paste0(trim(firstPartVector),
+           trim(secondPartVector));
+
+  if (!is.null(prefix)) {
+    newKeys <-
+      paste0(trim(prefix),
+             newKeys);
+  }
+
+  if (!is.null(suffix)) {
+    newKeys <-
+      paste0(newKeys,
+             trim(suffix));
+  }
+
   ### Unduplicate new keys 'internally'
   currentLetter <- 1;
   while (TRUE %in% duplicated(newKeys)) {
@@ -61,14 +78,14 @@ generateBibtexkeys <- function(dataframe, authorMinLength = 2) {
 
   ### Restore original fieldnames (i.e. in whichever case)
   names(dataframe) <- oldFieldNames;
-  
+
   if (!('bibtexkey' %in% names(dataframe))) {
     dataframe$bibtexkey <- newKeys;
   }
   else {
-    
+
     allKeys <- c(unique(dataframe$bibtexkey), newKeys);
-    
+
     ### Unduplicate new keys 'externally'
     #     currentLetter <- 1;
     #     while (TRUE %in% (newKeys %in% allKeys)) {
@@ -77,14 +94,14 @@ generateBibtexkeys <- function(dataframe, authorMinLength = 2) {
     #       allKeys <- c(unique(dataframe$bibtexkey), newKeys);
     #       currentLetter <- currentLetter + 1;
     #     }
-    
-    
+
+
     ### Replace empty bibtexkeys with newly generated keys
     dataframe$bibtexkey <- ifelse(is.na(dataframe$bibtexkey),
                                   newKeys,
                                   dataframe$bibtexkey);
   }
-  
+
   ### Return result
   return(dataframe);
 }
