@@ -103,6 +103,31 @@ rxs_fg_single <- function(node,
                                  fillerCharacter = fillerCharacter,
                                  eC = eC);
 
+  valueTemplateValidation <-
+    rxs_fg_valueTemplateValidation(node=node,
+                                   valueTemplates = valueTemplates,
+                                   level = level,
+                                   indent = indent,
+                                   indentSpaces = indentSpaces,
+                                   fullWidth = fullWidth,
+                                   commentCharacter = commentCharacter,
+                                   fillerCharacter = fillerCharacter,
+                                   eC = eC);
+
+
+
+  ### Use 'this' - process afterwards using data.tree - or some other
+  ### way to leverage data.tree's "Do"
+
+
+
+  validationSpecification <-
+    paste0(lV$indentSpaces,
+           returnPathToRoot(node),
+           "[['validation']] <- expression(",
+           valueTemplateValidation,
+           ");");
+
   openingTxt <- paste0(" START: ", currentStartEndName, " ");
   closingTxt <- paste0(" END: ", currentStartEndName, " ");
   openingTxt <-
