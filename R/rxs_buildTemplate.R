@@ -16,7 +16,7 @@ rxs_buildTemplate <- function(rxsStructure,
          "'rxsStructure' (but instead ", vecTxtQ(rxsStructure), ").");
   }
 
-  scriptBit <-
+  scriptChunk <-
     rxs_fg_dispatcher(node = rxsStructure$parsedEntities$extractionScriptTree,
                       valueTemplates = rxsStructure$parsedValueTemplates,
                       indent = indent,
@@ -57,13 +57,33 @@ rxs_buildTemplate <- function(rxsStructure,
                   "---",
                   "");
 
-  setupChunk = c();
+  setupChunk <- c("```{r setup, include=FALSE}",
+                  "### First load (and perhaps install) userfriendlyscience",
+                  "if (!require('userfriendlyscience')) {",
+                  "  install.packages('userfriendlyscience');",
+                  "  require('userfriendlyscience');",
+                  "}",
+                  "",
+                  "### The a number of other packages",
+                  "safeRequire('googlesheets');     ### To import data from google sheets in metabefor",
+                  "safeRequire('jsonlite');         ### To import a list of country codes in metabefor",
+                  "safeRequire('data.tree');        ### To work with data structured in a tree in metabefor",
+                  "safeRequire('devtools');         ### To install metabefor from github repo",
+                  "                                 ### ... Which we then do here:",
+                  "devtools::install_github('Matherion/metabefor');",
+                  "require('metabefor');",
+                  "",
+                  "```");
 
   res <- c(yamlHeader,
+           "",
            setupChunk,
+           "",
            "```{r rxsChunk, echo=FALSE}",
-           scriptBit,
+           scriptChunk,
            "```",
+           "",
+           validationChunk,
            "");
 
   return(res);
