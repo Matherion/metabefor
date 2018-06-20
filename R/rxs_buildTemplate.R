@@ -96,19 +96,28 @@ rxs_buildTemplate <- function(rxsStructure,
                       printableValueTemplateCols,
                       "```");
 
+  showExtractedDataChunk <- c("```{r show-extracted-data-chunk, echo=FALSE}",
+                              "print.rxs(study);",
+                              "```");
+
   validationChunk <- c("```{r validation-chunk, echo=FALSE}",
                        "rxs_validation(study);",
+                       "#rxs_validation(study,",
+                       "#               rxsStructure = fullResults$rxsStructure);",
+                       "cat(study$validationResults, sep='\n');",
                        "```");
 
   res <- c(yamlHeader,
-           "",
            setupChunk,
            "",
            fieldnameChunk,
            "",
            "```{r rxsChunk, echo=FALSE}",
            scriptChunk,
+           "class(study) <- c('rxs', class(study));",
            "```",
+           "",
+           showExtractedDataChunk,
            "",
            validationChunk,
            "");
