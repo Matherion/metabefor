@@ -22,24 +22,13 @@ rxs_fromSpecifications <- function(gs_url = NULL,
                                    valueTemplateCols = valueTemplateColNames(),
                                    repeatingSuffix = "__1__",
                                    rootName = "study",
-                                   silent=FALSE) {
-
-  ### Check argument integrity
-  if (!is.null(entitiesFilename)) {
-    if (!file.exists(entitiesFilename)) {
-      stop("You specified a filename for 'entitiesFilename' ('",
-           entitiesFilename, "'), but it does not exist.");
-    }
-  }
-  if (!is.null(valueTemplatesFilename)) {
-    if (!file.exists(valueTemplatesFilename)) {
-      stop("You specified a filename for 'valueTemplatesFilename' ('",
-           valueTemplatesFilename, "'), but it does not exist.");
-    }
-  }
+                                   silent=FALSE,
+                                   returnFullObject = FALSE) {
 
   ### Import sheets, if sheets identifier (gs_url) was provided
   entities <- FALSE;
+  definitions <- NULL; ### In case the full object is requested but
+                       ### no definitions are loaded
   if (!is.null(gs_url)) {
     tryCatch({
       gsObject <- gs_url(gs_url);
@@ -48,22 +37,47 @@ rxs_fromSpecifications <- function(gs_url = NULL,
       if (!is.null(ws$definitions)) {
         definitions <- gs_read(gsObject, ws = ws$definitions);
       }
+      if (!silent) {
+        cat("Successfully read the extraction script specifications from Google sheets.\n");
+      }
     },
              error = function(e) {
-               cat("\nYou specified a google sheet, but I have problems",
-                   "accessing it - trying to access local files.\n");
+               if (!silent) {
+                 cat("You specified a google sheet, but I have problems",
+                     "accessing it - trying to access local files.\n");
+               }
              });
   }
 
   ### If the sheets identifier was not provided, or loading it failed,
   ### load from a local file
   if (all(entities == FALSE)) {
-    if (is.null(entitiesFilename)) {
+
+    ### Check whether the files exist
+    if (!is.null(entitiesFilename)) {
+      if (!file.exists(entitiesFilename)) {
+        stop("You specified a filename for 'entitiesFilename' ('",
+             entitiesFilename, "'), but it does not exist.");
+      }
+    } else {
       stop("Either a google sheets URL was not provided in gs_url, ",
            "or loading the sheets failed; and you did not provide ",
            "a filename in 'entitiesFilename'. That means that I cannot ",
            "load the extraction script specifications.");
     }
+
+    if (!is.null(valueTemplatesFilename)) {
+      if (!file.exists(valueTemplatesFilename)) {
+        stop("You specified a filename for 'valueTemplatesFilename' ('",
+             valueTemplatesFilename, "'), but it does not exist.");
+      }
+    } else {
+      stop("Either a google sheets URL was not provided in gs_url, ",
+           "or loading the sheets failed; and you did not provide ",
+           "a filename in 'valueTemplatesFilename'. That means that I cannot ",
+           "load the extraction script specifications.");
+    }
+
     entities <- read.csv(entitiesFilename,
                          stringsAsFactors = FALSE);
     valueTemplates <- read.csv(valueTemplatesFilename,
@@ -72,6 +86,11 @@ rxs_fromSpecifications <- function(gs_url = NULL,
       definitions <- read.csv(definitionsFilename,
                               stringsAsFactors = FALSE);
     }
+
+    if (!silent) {
+      cat("Succesfully read the extraction script specifications from local files.\n");
+    }
+
   }
 
   ### Write local backup, if need be
@@ -79,16 +98,25 @@ rxs_fromSpecifications <- function(gs_url = NULL,
     write.csv(entities,
               row.names=FALSE,
               gs_localBackup$entities);
+    if (!silent) {
+      cat0("Stored local backup of entities to '", gs_localBackup$entities, "'.\n");
+    }
   }
   if (!is.null(gs_localBackup$valueTemplates)) {
     write.csv(valueTemplates,
               row.names=FALSE,
               gs_localBackup$valueTemplates);
+    if (!silent) {
+      cat0("Stored local backup of value templates to '", gs_localBackup$valueTemplates, "'.\n");
+    }
   }
   if (!is.null(gs_localBackup$definitions) && !is.null(definitions)) {
     write.csv(definitions,
               row.names=FALSE,
               gs_localBackup$definitions);
+    if (!silent) {
+      cat0("Stored local backup of definitions to '", gs_localBackup$definitions, "'.\n");
+    }
   }
 
   ### Finally start processing
@@ -109,19 +137,46 @@ rxs_fromSpecifications <- function(gs_url = NULL,
                                    eC = eC,
                                    repeatingSuffix = repeatingSuffix,
                                    silent=silent);
+  if (!silent) {
+    cat("Parsed extraction script specifications into extraction script template.\n");
+  }
+
+  if (returnFullObject) {
+    res <- list(rxsSpecification = list(entities = entities,
+                                        valueTemplates = valueTemplates,
+                                        definitions = definitions,
+                                        eC = eC,
+                                        valueTemplateCols = valueTemplateCols,
+                                        rootName = rootName,
+                                        yamlMetadata = yamlMetadata,
+                                        indent=indent,
+                                        indentSpaces=indentSpaces,
+                                        commentCharacter = commentCharacter,
+                                        fillerCharacter = fillerCharacter),
+                rxsStructure = rxsStructure,
+                rxsTemplate = rxsTemplate);
+    class(res) <- "rxsStructure";
+  } else {
+    res <- rxsTemplate;
+  }
 
   if (!is.null(outputFile)) {
     if (isTRUE(outputFile)) {
       ### Write to current working directory
-      writeLines(paste0(unlist(rxsTemplate), collapse="\n"),
-                 "template.rxs.Rmd");
+      fileToWriteTo <- file.path(getwd(), "template.rxs.Rmd");
     } else if (is.character(outputFile)) {
-      writeLines(paste0(unlist(rxsTemplate), collapse="\n"),
-                 outputFile);
+      ### Path is specified in 'outputFile'
+      fileToWriteTo <- outputFile;
     }
-    invisible(rxsTemplate);
+    writeLines(paste0(unlist(rxsTemplate), collapse="\n"),
+               fileToWriteTo);
+    if (!silent) {
+      cat0("Successfully wrote extraction script template to '",
+           fileToWriteTo, "'.\n");
+    }
+    invisible(res);
   } else {
-    return(rxsTemplate);
+    return(res);
   }
 
 }

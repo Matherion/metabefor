@@ -114,8 +114,6 @@ rxs_fg_single <- function(node,
                                    fillerCharacter = fillerCharacter,
                                    eC = eC);
 
-
-
   ### Use 'this' - process afterwards using data.tree - or some other
   ### way to leverage data.tree's "Do"
 
@@ -161,6 +159,8 @@ rxs_fg_single <- function(node,
                 lV$commentPrefix,
                 valueTemplateExamples,
                 lV$commentPrefix,
+                lV$lineFiller,
+                validationSpecification,
                 lV$lineFiller,
                 closingTxt,
                 lV$lineFiller)));

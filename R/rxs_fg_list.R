@@ -41,8 +41,7 @@ rxs_fg_list <- function(node,
   if (isTRUE(node[[eC$repeatingCol]])) {
     currentEntityName <- paste0(node$name, repeatingSuffix);
     currentStartEndName <- paste0(node$name, " (REPEATING)");
-    nodeRenaming <- c(lV$lineFiller,
-                      paste0(lV$indentSpaces,
+    nodeRenaming <- c(paste0(lV$indentSpaces,
                              returnPathToRoot(node$parent),
                              "$", currentEntityName, "$name <- ",
                              returnPathToRoot(node$parent),
@@ -88,15 +87,48 @@ rxs_fg_list <- function(node,
     return(paste0(node$name, " = ", trim(valueAssignment)));
   }, filterFun = isLeaf);
 
+  entityValidations <- node$Get(function(node) {
+    return(rxs_fg_valueTemplateValidation(node=node,
+                                          valueTemplates = valueTemplates,
+                                          level = level,
+                                          indent = indent,
+                                          indentSpaces = indentSpaces,
+                                          fullWidth = fullWidth,
+                                          commentCharacter = commentCharacter,
+                                          fillerCharacter = fillerCharacter,
+                                          eC = eC));
+  }, filterFun = isLeaf);
+
+  listElementNames <- node$Get('name', filterFun = isLeaf);
+
+  validationAssignmentStart <- paste0(lV$indentSpaces,
+                                      returnPathToRoot(node$parent),
+                                      "$", currentEntityName,
+                                      "[['validation']] <- ");
+  validationFollowingSpaces <- repStr(nchar(validationAssignmentStart));
+
   if (length(listEntities) == 1) {
     valueAssignment <- c(paste0(lV$valuePrefix, "list(", listEntities[1], ");"));
+    validationAssignment <- c(paste0(lV$indentSpaces, validationAssignmentStart,
+                                     "list(`", listElementNames[1], "` = expression(", entityValidations[1], "));"));
   } else if (length(listEntities) == 2) {
     valueAssignment <- c(paste0(lV$valuePrefix, "list(", listEntities[1], ","),
                          paste0(lV$valuePrefix, repStr(5), listEntities[2], ");"));
+    validationAssignment <- c(paste0(validationAssignmentStart, "list(`", listElementNames[1],
+                                     "` = expression(", entityValidations[1], "),"),
+                              paste0(validationFollowingSpaces, repStr(5), "`", listElementNames[2],
+                                     "` = expression(", entityValidations[2], "));"));
   } else {
     valueAssignment <- c(paste0(lV$valuePrefix, "list(", listEntities[1], ","),
                          paste0(lV$valuePrefix, repStr(5), listEntities[-c(1, length(listEntities))], ","),
                          paste0(lV$valuePrefix, repStr(5), listEntities[length(listEntities)], ");"));
+    validationAssignment <- c(paste0(validationAssignmentStart, "list(`",
+                                     listElementNames[1], "` = expression(", entityValidations[1], "),"),
+                              paste0(validationFollowingSpaces, repStr(5),
+                                     "`", listElementNames[-c(1, length(entityValidations))], "` = expression(",
+                                     entityValidations[-c(1, length(entityValidations))], "),"),
+                              paste0(validationFollowingSpaces, repStr(5),
+                                     "`", listElementNames[length(entityValidations)], "` = expression(", entityValidations[length(entityValidations)], "));"));
   }
 
   if (!is.null(codingHelp) && !is.na(codingHelp)) {
@@ -188,6 +220,8 @@ rxs_fg_list <- function(node,
                 lV$valuePrefix,
                 valueAssignment,
                 lV$valuePrefix,
+                lV$lineFiller,
+                validationAssignment,
                 nodeRenaming,
                 lV$lineFiller,
                 closingTxt,

@@ -3,7 +3,8 @@ valueTemplateColNames <- function(...) {
            descriptionCol = "description",
            defaultCol = "default",
            examplesCol = "examples",
-           validationCol = "validation");
+           validationCol = "validation",
+           errorCol = "error");
   tweaks <- unlist(list(...));
   presentElements <- names(tweaks) %in% names(res);
   if (!all(presentElements)) {

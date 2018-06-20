@@ -71,13 +71,40 @@ rxs_buildTemplate <- function(rxsStructure,
                   "safeRequire('devtools');         ### To install metabefor from github repo",
                   "                                 ### ... Which we then do here:",
                   "devtools::install_github('Matherion/metabefor');",
-                  "require('metabefor');",
+                  "require('metabefor');            ### ... After which we load it",
                   "",
                   "```");
+
+
+  printable_eC <-
+    paste0(c("eC <- list(", rep(repStr(11), length(eC)-1)),
+           paste0(names(eC), "=", '"', unlist(eC), '"'),
+           c(character(length(eC)-1), ");"), collapse=",\n");
+
+  valueTemplateCols <-
+    attributes(rxsStructure$parsedValueTemplates)$originalColNames;
+
+  printableValueTemplateCols <-
+    paste0(c("valueTemplateCols <- list(", rep(repStr(26), length(valueTemplateCols)-1)),
+           paste0(names(valueTemplateCols), "=", '"', unlist(valueTemplateCols), '"'),
+           c(character(length(valueTemplateCols)-1), ");"), collapse=",\n");
+
+
+  fieldnameChunk <- c("```{r fieldname-chunk, echo=FALSE}",
+                      printable_eC,
+                      "",
+                      printableValueTemplateCols,
+                      "```");
+
+  validationChunk <- c("```{r validation-chunk, echo=FALSE}",
+                       "rxs_validation(study);",
+                       "```");
 
   res <- c(yamlHeader,
            "",
            setupChunk,
+           "",
+           fieldnameChunk,
            "",
            "```{r rxsChunk, echo=FALSE}",
            scriptChunk,

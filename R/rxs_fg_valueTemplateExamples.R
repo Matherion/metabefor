@@ -30,6 +30,19 @@ rxs_fg_valueTemplateExamples <- function(node,
     res <- node$examples;
   }
 
+  ### Do fieldname replacement using regular expressions, if need be
+  allEntityFieldNames <- paste0("<<", eC, ">>");
+  fieldNameReplacementHits <- sapply(allEntityFieldNames, grepl, x=res);
+  if (any(fieldNameReplacementHits)) {
+    for (i in which(fieldNameReplacementHits)) {
+      fieldNameReplacementContents <-
+        node[[eC[[i]]]];
+      res <- gsub(allEntityFieldNames[i],
+                  fieldNameReplacementContents,
+                  res);
+    }
+  }
+
   if (listVersion) {
     res <- trim(unlist(strsplit(res, "||", fixed=TRUE)));
     return(res);
