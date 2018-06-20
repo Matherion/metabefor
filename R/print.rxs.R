@@ -32,7 +32,5 @@ print.rxs <- function(studyTree,
 
   cat("\n\n# Table with extracted entities and extracted values\n\n");
 
-  print(res);
-
-  invisible(res);
+  return(res);
 }
