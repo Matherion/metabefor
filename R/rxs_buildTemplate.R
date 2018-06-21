@@ -95,21 +95,26 @@ rxs_buildTemplate <- function(rxsStructure,
            c(character(length(valueTemplateCols)-1), ");"), collapse=",\n");
 
 
-  fieldnameChunk <- c("```{r fieldname-chunk, echo=FALSE}",
+  fieldnameChunk <- c("```{r fieldname-chunk}",
                       printable_eC,
                       "",
                       printableValueTemplateCols,
                       "```");
 
-  showExtractedDataChunk <- c("```{r show-extracted-data-chunk, echo=FALSE, results='asis'}",
+  showExtractedDataChunk <- c("```{r show-extracted-data-chunk, results='asis'}",
                               "print.rxs(study);",
                               "```");
 
-  validationChunk <- c("```{r validation-chunk, echo=FALSE}",
+  validationChunk <- c("```{r validation-chunk}",
                        "rxs_validation(study);",
+                       "pandoc.header('Validation results', level=1)",
                        "#rxs_validation(study,",
                        "#               rxsStructure = fullResults$rxsStructure);",
-                       "cat(study$validationResults, sep='\n');",
+                       "if (length(study$validationResults) > 2) {",
+                       "  cat(paste0('- ', study$validationResults), sep='\n');",
+                       "} else {",
+                       "  cat('Validation successful!');",
+                       "}",
                        "```");
 
   res <- c(yamlHeader,
