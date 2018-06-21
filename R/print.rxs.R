@@ -29,7 +29,9 @@ print.rxs <- function(studyTree,
   printableStudyTree <- Clone(studyTree);
   class(printableStudyTree) <- setdiff(class(study), "rxs");
 
+  if (knit) cat("\n\n<pre>");
   print(printableStudyTree);
+  if (knit) cat("</pre>\n\n");
 
   pandoc.header("Table with extracted entities and extracted values", level=1);
 
