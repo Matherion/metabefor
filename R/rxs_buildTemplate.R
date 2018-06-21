@@ -64,15 +64,20 @@ rxs_buildTemplate <- function(rxsStructure,
                   "  require('userfriendlyscience');",
                   "}",
                   "",
-                  "### The a number of other packages",
+                  "### Other packages",
                   "safeRequire('googlesheets');     ### To import data from google sheets in metabefor",
                   "safeRequire('jsonlite');         ### To import a list of country codes in metabefor",
                   "safeRequire('data.tree');        ### To work with data structured in a tree in metabefor",
+                  "safeRequire('pander');           ### To print the dataframe with results in a nice way",
                   "safeRequire('devtools');         ### To install metabefor from github repo",
                   "                                 ### ... Which we then do here:",
                   "devtools::install_github('Matherion/metabefor');",
                   "require('metabefor');            ### ... After which we load it",
                   "",
+                  "### Settings",
+                  "knitr::opts_chunk$set(echo = FALSE);          ### Suppress R command printing",
+                  "knitr::opts_chunk$set(comment=NA);            ### Suppress output prefix",
+                  "pander::panderOptions(table.split.table=Inf); ### Disable table splitting",
                   "```");
 
 
@@ -96,7 +101,7 @@ rxs_buildTemplate <- function(rxsStructure,
                       printableValueTemplateCols,
                       "```");
 
-  showExtractedDataChunk <- c("```{r show-extracted-data-chunk, echo=FALSE}",
+  showExtractedDataChunk <- c("```{r show-extracted-data-chunk, echo=FALSE, results='asis'}",
                               "print.rxs(study);",
                               "```");
 

@@ -24,14 +24,21 @@ print.rxs <- function(studyTree,
 
   res <- do.call("rbind", res)
 
-  pandoc.header("\n\n# Tree of extracted entities\n\n", level=1);
+  pandoc.header("Tree of extracted entities", level=1);
 
   printableStudyTree <- Clone(studyTree);
   class(printableStudyTree) <- setdiff(class(study), "rxs");
 
   print(printableStudyTree);
 
-  cat("\n\n# Table with extracted entities and extracted values\n\n");
+  pandoc.header("Table with extracted entities and extracted values", level=1);
 
-  return(res);
+  if (knit) {
+    cat(knit(text = "\n\n```{r extracted-data-chunk, echo=FALSE, cache=FALSE, message=FALSE, results='markup' }\n  pander(res);\n```\n\n",
+             quiet = TRUE));
+    invisible(res);
+  } else {
+    return(res);
+  }
+
 }
