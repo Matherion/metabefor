@@ -30,13 +30,15 @@ print.rxs <- function(studyTree,
   class(printableStudyTree) <- setdiff(class(study), "rxs");
 
   if (knit) cat("\n\n<pre>");
-  print(printableStudyTree);
+  ### Suppress warnings until bug in data.tree is fixed, see:
+  ### https://github.com/gluc/data.tree/issues/106
+  suppressWarnings(print(printableStudyTree));
   if (knit) cat("</pre>\n\n");
 
   pandoc.header("Table with extracted entities and extracted values", level=1);
 
   if (knit) {
-    cat(knitr::knit(text = "\n\n```{r extracted-data-chunk, echo=FALSE, cache=FALSE, message=FALSE, results='markup' }\n  pander(res);\n```\n\n",
+    cat(knitr::knit(text = "\n\n```{r extracted-data-chunk, echo=FALSE, cache=FALSE, message=FALSE, results='markup' }\n  pander(res, row.names=FALSE);\n```\n\n",
                     quiet = TRUE));
     invisible(res);
   } else {

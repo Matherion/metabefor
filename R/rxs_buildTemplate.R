@@ -105,7 +105,7 @@ rxs_buildTemplate <- function(rxsStructure,
                               "print.rxs(study);",
                               "```");
 
-  validationChunk <- c("```{r validation-chunk}",
+  validationChunk <- c("```{r validation-chunk, results='asis'}",
                        "rxs_validation(study);",
                        "pandoc.header('Validation results', level=1)",
                        "#rxs_validation(study,",
