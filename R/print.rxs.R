@@ -1,5 +1,6 @@
 print.rxs <- function(studyTree,
                       rxsStructure=NULL,
+                      knit=TRUE,
                       ...) {
   res <- studyTree$Get(function(node) {
     nodeName <- node$name;
@@ -23,7 +24,7 @@ print.rxs <- function(studyTree,
 
   res <- do.call("rbind", res)
 
-  cat("\n\n# Tree of extracted entities\n\n");
+  pandoc.header("\n\n# Tree of extracted entities\n\n", level=1);
 
   printableStudyTree <- Clone(studyTree);
   class(printableStudyTree) <- setdiff(class(study), "rxs");
