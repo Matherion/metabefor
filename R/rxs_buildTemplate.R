@@ -75,9 +75,9 @@ rxs_buildTemplate <- function(rxsStructure,
                   "require('metabefor');            ### ... After which we load it",
                   "",
                   "### Settings",
-                  "knitr::opts_chunk$set(echo = FALSE);          ### Suppress R command printing",
-                  "knitr::opts_chunk$set(comment=NA);            ### Suppress output prefix",
-                  "pander::panderOptions(table.split.table=Inf); ### Disable table splitting",
+                  "knitr::opts_chunk$set(echo = FALSE);             ### Suppress R command printing",
+                  "knitr::opts_chunk$set(comment=NA);               ### Suppress output prefix",
+                  "pander::panderOptions('table.split.table', Inf); ### Disable table splitting",
                   "```");
 
 

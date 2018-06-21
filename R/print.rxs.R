@@ -34,8 +34,8 @@ print.rxs <- function(studyTree,
   pandoc.header("Table with extracted entities and extracted values", level=1);
 
   if (knit) {
-    cat(knit(text = "\n\n```{r extracted-data-chunk, echo=FALSE, cache=FALSE, message=FALSE, results='markup' }\n  pander(res);\n```\n\n",
-             quiet = TRUE));
+    cat(knitr::knit(text = "\n\n```{r extracted-data-chunk, echo=FALSE, cache=FALSE, message=FALSE, results='markup' }\n  pander(res);\n```\n\n",
+                    quiet = TRUE));
     invisible(res);
   } else {
     return(res);
