@@ -1,5 +1,5 @@
 query_toInterfaceLang <- function(queryObject,
-                                  fields='ti',
+                                  fields='title',
                                   exclude=NULL) {
 
   res <- list(input = as.list(environment()),
@@ -12,22 +12,24 @@ query_toInterfaceLang <- function(queryObject,
     filterFun=function(n)
       return(!n$isLeaf && !n$isRoot));
 
-  if (fields=='ti') {
+  searchInTitle <- grepl('title', fields, ignore.case=TRUE);
+  searchInAbstract <- grepl('abstract', fields, ignore.case=TRUE);
+  searchInTextWords <- grepl('text words', fields, ignore.case=TRUE);
+
+  if (searchInTitle && !searchInAbstract && !searchInTextWords) {
     pubMedFields <- ' [TI]';
     ebscoHostFields <- 'TI ';
     ovidFields <- '.ti.';
-  }
-
-  if (fields=='tiab') {
+  } else if (searchInTitle && searchInAbstract && !searchInTextWords) {
     pubMedFields <- ' [TIAB]';
     ebscoHostFields <- 'TI ';
     ovidFields <- '.ti.ab';
-  }
-
-  if (fields=='tx') {
+  } else if (!searchInTitle && !searchInAbstract && searchInTextWords) {
     pubMedFields <- ' [Text Word]';
     ebscoHostFields <- 'TX ';
     ovidFields <- '.tw.';
+  } else {
+    stop("Unknown field of combination of fields specified!");
   }
 
   ### Generate PubMed Query
