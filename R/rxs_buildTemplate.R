@@ -2,6 +2,7 @@ rxs_buildTemplate <- function(rxsStructure,
                               yamlMetadata = list(title = "Systematic Review Extraction Script Template",
                                                   author = NULL,
                                                   date = format(Sys.time(), '%d %b %Y at %H:%M:%S')),
+                              gs_url = NULL,
                               indent = TRUE,
                               indentSpaces = 2,
                               fullWidth = 80,
@@ -100,6 +101,13 @@ rxs_buildTemplate <- function(rxsStructure,
                       "",
                       printableValueTemplateCols,
                       "```");
+
+  if (!is.null(gs_url)) {
+    import_rxsSpecsChunk <- c("```{r rxsSpec-import-chunk}",
+                              "",
+                              "",
+                              "```");
+  }
 
   showExtractedDataChunk <- c("```{r show-extracted-data-chunk, results='asis'}",
                               "print.rxs(study);",
