@@ -18,6 +18,8 @@ rxs_fg_valueTemplateValidation <- function(node,
 
   valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
 
+  res <- NA;
+
   if (is.null(valueTemplate$validation) || is.na(valueTemplate$validation) || (nchar(valueTemplate$validation) == 0)) {
     return(NULL);
   } else {
@@ -29,6 +31,10 @@ rxs_fg_valueTemplateValidation <- function(node,
     res <- node$validation;
   }
 
+  if (is.na(res)) {
+    return(TRUE);
+  }
+
   ######################################################################
   ### Do fieldname replacement using regular expressions, if need be
   ######################################################################
@@ -38,11 +44,12 @@ rxs_fg_valueTemplateValidation <- function(node,
   allEntityFieldNames <- paste0("<<", eC, ">>");
   matchesInEntityFieldNames <-
     which(sapply(allEntityFieldNames, grepl, x=res));
+  entityFieldValues <- c();
   if (any(matchesInEntityFieldNames)) {
-    entityFieldValues <- node[[unlist(eC[matchesInEntityFieldNames])]];
-    names(entityFieldValues) <- eC[matchesInEntityFieldNames];
-  } else {
-    entityFieldValues <- c();
+    if (!is.null(node[[unlist(eC[matchesInEntityFieldNames])]])) {
+      entityFieldValues <- node[[unlist(eC[matchesInEntityFieldNames])]];
+      names(entityFieldValues) <- unlist(eC[matchesInEntityFieldNames]);
+    }
   }
 
   ### Then look in the value template specification

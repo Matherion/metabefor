@@ -19,7 +19,7 @@ rxs_fg_valueTemplateDescription <- function(node,
 
   valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
 
-  if (is.na(valueTemplate$description) || (nchar(valueTemplate$description) == 0)) {
+  if (is.null(valueTemplate$description) || is.na(valueTemplate$description) || (nchar(valueTemplate$description) == 0)) {
     return(NULL);
   } else {
     res <- valueTemplate$description;
