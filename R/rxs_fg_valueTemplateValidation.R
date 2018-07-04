@@ -18,7 +18,7 @@ rxs_fg_valueTemplateValidation <- function(node,
 
   valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
 
-  if (is.na(valueTemplate$validation) || (nchar(valueTemplate$validation) == 0)) {
+  if (is.null(valueTemplate$validation) || is.na(valueTemplate$validation) || (nchar(valueTemplate$validation) == 0)) {
     return(NULL);
   } else {
     res <- valueTemplate$validation;

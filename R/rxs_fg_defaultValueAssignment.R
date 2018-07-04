@@ -25,7 +25,7 @@ rxs_fg_defaultValueAssignment <- function(node,
 
   valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
 
-  if (is.na(valueTemplate$default) || (nchar(valueTemplate$default) == 0)) {
+  if (is.null(valueTemplate$default) || is.na(valueTemplate$default) || (nchar(valueTemplate$default) == 0)) {
     res <- "NA";
   } else {
     res <- valueTemplate$default;
