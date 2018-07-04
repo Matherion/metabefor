@@ -1,8 +1,24 @@
-rxs_fg_trueRecursionText <- function() {
+rxs_fg_trueRecursionText <- function(recursiveNodeName) {
   return(paste0("Here, the entity that is currently being coded ",
                 "can recurse: it can contain itself. Therefore, if ",
                 "accurate coding of the source document requires ",
                 "this recursion, you must manually copy-paste an ",
                 "empty instance from the list of recursing entities ",
-                "at the bottom of this extraction script file."));
+                "at the bottom of this extraction script file. ",
+                "In the 'RECURSING ENTITIES' section, look for the ",
+                "section from 'START: ", recursiveNodeName, "' to ",
+                "'END: ", recursiveNodeName, "'. Insert ",
+                "the text in place of the 'NA' shown above. Then, ",
+                "in the section you just inserted, look for the line ",
+                "starting with 'recursiveElementPlaceholder_levelX <- ', ",
+                "where the X is the number of the recursion nesting (e.g. ",
+                "for the first recursion, this will be 1; if you ",
+                "recursed two levels deep, it will be 2). Add one to this ",
+                "number (i.e. 1 becomes 2, 2 becomes 3, etc). A few lines ",
+                "above this comment, you will see the same line, with ",
+                "the number of the *current* recursion. You should ",
+                "look for that line in the fragment you just inserted, and ",
+                "then add 1 to the level. After you did that, in that ",
+                "fragment, look for all other occurrences of ",
+                "recursiveElementPlaceholder_levelX and update them all."));
 }

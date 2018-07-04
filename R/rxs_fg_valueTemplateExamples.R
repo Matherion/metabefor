@@ -82,62 +82,60 @@ rxs_fg_valueTemplateExamples <- function(node,
 
   ### If we have no matches, we can immediately return the
   ### answer without replacing anything
-  if (length(c(entityFieldValues, valueTemplateFieldValues)) == 0) {
-    return(res);
-  }
+  if (length(c(entityFieldValues, valueTemplateFieldValues)) > 0) {
 
-  ### Now, for both lists, remove all matched fields that don't have a value
-  entityFieldValues <-
-    ifelse(!is.null(entityFieldValues) &
-             !is.na(entityFieldValues) &
-             (length(entityFieldValues) > 0),
-           entityFieldValues,
-           NA);
-  entityFieldValues <-
-    entityFieldValues[!is.na(entityFieldValues)];
+    ### Now, for both lists, remove all matched fields that don't have a value
+    entityFieldValues <-
+      ifelse(!is.null(entityFieldValues) &
+               !is.na(entityFieldValues) &
+               (length(entityFieldValues) > 0),
+             entityFieldValues,
+             NA);
+    entityFieldValues <-
+      entityFieldValues[!is.na(entityFieldValues)];
 
-  valueTemplateFieldValues <-
-    ifelse(!is.null(valueTemplateFieldValues) &
-             !is.na(valueTemplateFieldValues) &
-             (length(valueTemplateFieldValues) > 0),
-           valueTemplateFieldValues,
-           NA);
-  valueTemplateFieldValues <-
-    valueTemplateFieldValues[!is.na(valueTemplateFieldValues)];
+    valueTemplateFieldValues <-
+      ifelse(!is.null(valueTemplateFieldValues) &
+               !is.na(valueTemplateFieldValues) &
+               (length(valueTemplateFieldValues) > 0),
+             valueTemplateFieldValues,
+             NA);
+    valueTemplateFieldValues <-
+      valueTemplateFieldValues[!is.na(valueTemplateFieldValues)];
 
-  ### Now remove all remaining fields, that apparently have valid
-  ### values for the entity sheet (which overrides value templates),
-  ### from the value templates list.
-  valueTemplateFieldValuesToKeep <-
-    setdiff(names(valueTemplateFieldValues),
-            names(entityFieldValues));
-  valueTemplateFieldValues <-
-    valueTemplateFieldValues[valueTemplateFieldValuesToKeep];
+    ### Now remove all remaining fields, that apparently have valid
+    ### values for the entity sheet (which overrides value templates),
+    ### from the value templates list.
+    valueTemplateFieldValuesToKeep <-
+      setdiff(names(valueTemplateFieldValues),
+              names(entityFieldValues));
+    valueTemplateFieldValues <-
+      valueTemplateFieldValues[valueTemplateFieldValuesToKeep];
 
-  ### Concatenate both lists and process them
-  fullReplacementList <- c(entityFieldValues,
-                           valueTemplateFieldValues);
+    ### Concatenate both lists and process them
+    fullReplacementList <- c(entityFieldValues,
+                             valueTemplateFieldValues);
 
-  ### Process list
-  for (i in seq_along(fullReplacementList)) {
-    if (grepl("\\|\\|", fullReplacementList[i])) {
-      ### It's multiple elements, so change it into a valid vector
-      fieldNameReplacementContents <-
-        paste0("c(",
-               paste0(trim(unlist(strsplit(fullReplacementList[i],
-                                           "||", fixed=TRUE))),
-                      collapse=", "),
-               ")");
-    } else {
-      fieldNameReplacementContents <- fullReplacementList[i];
+    ### Process list
+    for (i in seq_along(fullReplacementList)) {
+      if (grepl("\\|\\|", fullReplacementList[i])) {
+        ### It's multiple elements, so change it into a valid vector
+        fieldNameReplacementContents <-
+          paste0("c(",
+                 paste0(trim(unlist(strsplit(fullReplacementList[i],
+                                             "||", fixed=TRUE))),
+                        collapse=", "),
+                 ")");
+      } else {
+        fieldNameReplacementContents <- fullReplacementList[i];
+      }
+
+      ### Do the replacement for this field
+      res <- gsub(paste0("<<", names(fullReplacementList)[i], ">>"),
+                  fieldNameReplacementContents,
+                  res);
     }
-
-    ### Do the replacement for this field
-    res <- gsub(paste0("<<", names(fullReplacementList)[i], ">>"),
-                fieldNameReplacementContents,
-                res);
   }
-
 
 
   ### Probably have to take the section from the valueTemplateValidation code.

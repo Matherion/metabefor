@@ -10,7 +10,7 @@ rxs_fg_trueRecursion <- function(node,
                                  silent=FALSE,
                                  overrideLevel = NULL,
                                  trueRecursionText = getOption("metabefor_trueRecursionText",
-                                                               rxs_fg_trueRecursionText())) {
+                                                               rxs_fg_trueRecursionText)) {
 
   ### This is a recursive occurrence of a recurring node.
   ### Therefore, we notify the coder that they should copy-paste
@@ -53,8 +53,9 @@ rxs_fg_trueRecursion <- function(node,
                           "');");
 
   assignmentToChild <- paste0(lV$indentSpaces,
+                              "recursiveElementPlaceholder_level1 <- ",
                               returnPathToRoot(node),
-                              "[['value']] <-");
+                              ";");
 
   titleDescription <-
     rxs_fg_TitleDescription(title=node[[eC$titleCol]],
@@ -66,9 +67,11 @@ rxs_fg_trueRecursion <- function(node,
                             commentCharacter = commentCharacter,
                             fillerCharacter = fillerCharacter);
 
-  valueAssignment <- strwrap(trueRecursionText,
-                             width=lV$commentWidth,
-                             prefix=paste0(lV$commentPrefix));
+  valueAssignment <- c(paste0(lV$indentSpaces, "NA"),
+                       lV$indentSpaces,
+                       strwrap(trueRecursionText(recursiveNodeName = node[[eC$recursingCol]]),
+                               width=lV$commentWidth,
+                               prefix=paste0(lV$commentPrefix)));
 
   openingTxt <- paste0(" START: ", currentStartEndName, " ");
   closingTxt <- paste0(" END: ", currentStartEndName, " ");
@@ -90,7 +93,7 @@ rxs_fg_trueRecursion <- function(node,
                 openingTxt,
                 lV$lineFiller,
                 childAddition,
-                #assignmentToChild,
+                assignmentToChild,
                 titleDescription,
                 lV$valuePrefix,
                 valueAssignment,

@@ -36,7 +36,7 @@ rxs_fg_recursingEntities <- function(listOfNodes,
 
   titleDescription <-
     rxs_fg_TitleDescription(title="RECURSING ENTITIES",
-                            description=paste0("This are the recursing entities. When done ",
+                            description=paste0("This section contains the recursing entities. When done ",
                                                "extracting from this paper, they can be removed from ",
                                                "the extraction script."),
                             level=level,
@@ -64,16 +64,30 @@ rxs_fg_recursingEntities <- function(listOfNodes,
   ### Now get the character vectors for the children
   childFragments <- unlist(sapply(listOfNodes,
                                   function(node) {
+                                    res <- rxs_fg_dispatcher(node,
+                                                             valueTemplates = valueTemplates,
+                                                             indent = indent,
+                                                             indentSpaces = indentSpaces,
+                                                             commentCharacter = commentCharacter,
+                                                             fillerCharacter = fillerCharacter,
+                                                             eC = eC,
+                                                             repeatingSuffix = repeatingSuffix,
+                                                             silent=silent);
+                                    ### Remove assignment of addition of node for this entity
+                                    res <- sapply(res,
+                                                  gsub,
+                                                  pattern=paste0("study$AddChild('", node$name, "');"),
+                                                  replacement="",
+                                                  fixed=TRUE);
+                                    ### In each recursive entitie (and its entire tree), replace
+                                    ### the assignment path with the placeholder name
+                                    res <- sapply(res,
+                                                  gsub,
+                                                  pattern=returnPathToRoot(node),
+                                                  replacement="recursiveElementPlaceholder_level1",
+                                                  fixed=TRUE);
                                     return(c("",
-                                             rxs_fg_dispatcher(node,
-                                                               valueTemplates = valueTemplates,
-                                                               indent = indent,
-                                                               indentSpaces = indentSpaces,
-                                                               commentCharacter = commentCharacter,
-                                                               fillerCharacter = fillerCharacter,
-                                                               eC = eC,
-                                                               repeatingSuffix = repeatingSuffix,
-                                                               silent=silent),
+                                             res,
                                              ""));
                                   }));
 
