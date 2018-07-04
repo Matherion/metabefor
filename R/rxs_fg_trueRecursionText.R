@@ -1,10 +1,8 @@
 rxs_fg_trueRecursionText <- function() {
-  return(paste0("Here, a recursing entity can be coded. ",
-                "However, in the extraction script coding tree, ",
-                "we are already within that entity (i.e. this ",
-                "is an example of true recursion). Therefore, if ",
-                "the source document contains this entity for ",
-                "extraction, you must manually copy-paste it ",
-                "from the list of recursing entities at the ",
-                "bottom of this extraction script file."));
+  return(paste0("Here, the entity that is currently being coded ",
+                "can recurse: it can contain itself. Therefore, if ",
+                "accurate coding of the source document requires ",
+                "this recursion, you must manually copy-paste an ",
+                "empty instance from the list of recursing entities ",
+                "at the bottom of this extraction script file."));
 }

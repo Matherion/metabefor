@@ -12,12 +12,12 @@ rxs_fg_trueRecursion <- function(node,
                                  trueRecursionText = getOption("metabefor_trueRecursionText",
                                                                rxs_fg_trueRecursionText())) {
 
-  ### This is a true recursive occurrence of a recursing node.
+  ### This is a recursive occurrence of a recurring node.
   ### Therefore, we notify the coder that they should copy-paste
   ### the recursive node from the bottom.
 
   if (!("parsedValueTemplates" %in% class(valueTemplates))) {
-    stop("Argment 'valueTemplates' does not have class 'parsedValueTemplates' ",
+    stop("Argument 'valueTemplates' does not have class 'parsedValueTemplates' ",
          "(but instead ", vecTxtQ(class(parsedValueTemplates)), ").");
   }
 

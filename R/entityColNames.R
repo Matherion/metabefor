@@ -12,6 +12,7 @@ entityColNames <- function(...) {
            listCol = "list",
            collapsingCol = "collapsing",
            repeatingCol = "repeating",
+           recurringCol = "recurring",
            recursingCol = "recursing");
   tweaks <- unlist(list(...));
   presentElements <- names(tweaks) %in% names(res);

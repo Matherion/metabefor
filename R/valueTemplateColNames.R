@@ -1,6 +1,7 @@
 valueTemplateColNames <- function(...) {
   res <- c(identifierCol = "identifier",
            descriptionCol = "description",
+           validValuesCol = "validValues",
            defaultCol = "default",
            examplesCol = "examples",
            validationCol = "validation",

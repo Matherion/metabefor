@@ -29,6 +29,29 @@ rxs_buildTemplate <- function(rxsStructure,
                       repeatingSuffix = repeatingSuffix,
                       silent=silent);
 
+  ### If this extraction script has any recursing entities, include them
+  ### separately
+  if (length(rxsStructure$parsedEntities$recursingNodes) > 0) {
+    recursingEntitiesChunk <-
+      rxs_fg_recursingEntities(rxsStructure$parsedEntities$recursingNodes,
+                               valueTemplates = rxsStructure$parsedValueTemplates,
+                               indent = indent,
+                               indentSpaces = indentSpaces,
+                               fullWidth = fullWidth,
+                               commentCharacter = commentCharacter,
+                               fillerCharacter = fillerCharacter,
+                               eC = eC,
+                               repeatingSuffix = repeatingSuffix,
+                               silent=silent);
+    recursingEntitiesChunk <-
+      c("```{r rxsChunk-recursingEntities, eval=FALSE, echo=FALSE}",
+        unlist(recursingEntitiesChunk),
+        "```");
+  } else {
+    recursingEntitiesChunk <-
+      NA;
+  }
+
   if (is.null(yamlMetadata$title)) {
     yamlTitle <- NULL;
   } else {
@@ -135,6 +158,9 @@ rxs_buildTemplate <- function(rxsStructure,
            "class(study) <- c('rxs', class(study));",
            "```",
            "",
+           ifelse(!is.na(recursingEntitiesChunk),
+                  c(recursingEntitiesChunk, ""),
+                  ""),
            showExtractedDataChunk,
            "",
            validationChunk,

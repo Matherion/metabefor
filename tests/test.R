@@ -36,13 +36,13 @@ fullResults <-
                                                       "test-entities.csv"),
                          valueTemplatesFilename = file.path(testPath,
                                                             "test-valueTemplates.csv"),
-                         gs_localBackup = list(entities = file.path(testPath,
-                                                                    "test-entities.csv"),
-                                               valueTemplates= file.path(testPath,
-                                                                         "test-valueTemplates.csv"),
-                                               definitions = NULL),
+                         localBackup = list(entities = file.path(testPath,
+                                                                 "test-entities.csv"),
+                                            valueTemplates= file.path(testPath,
+                                                                      "test-valueTemplates.csv"),
+                                            definitions = NULL),
                          outputFile = file.path(testPath, "template.rxs.Rmd"),
                          returnFullObject = TRUE);
 
-fullResults$rxsStructure$parsedEntities$extractionScriptTree;
+#fullResults$rxsStructure$parsedEntities$extractionScriptTree;
 

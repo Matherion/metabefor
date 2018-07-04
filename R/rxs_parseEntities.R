@@ -41,8 +41,11 @@ rxs_parseEntities <- function(entities,
                    "to make sure identifiers are unique."));
   }
 
+
   ### Retrieve all recursing node definitions and place them
-  ### in a separate list
+  ### in a separate list. We do this first for the recursing
+  ### nodes, then for the recurring nodes, because all recursing
+  ### nodes are recurring nodes.
   recursingNodes <-
     Traverse(extractionScriptTree,
              traversal="level",
@@ -50,7 +53,6 @@ rxs_parseEntities <- function(entities,
                return(isRecursingEntityDefinition(node,
                                                   recursingColName=eC$recursingCol));
              });
-
   ### Remove all recursing node definitions from the extraction
   ### script tree
   numberOfRecursingEntities <-
@@ -59,33 +61,73 @@ rxs_parseEntities <- function(entities,
             return(!isRecursingEntityDefinition(node,
                                                 recursingColName=eC$recursingCol));
           });
-
   ### Name the recursing entities
   names(recursingNodes) <-
     sapply(recursingNodes, function(x) return(x$name));
 
-  ### Add all recursive node definitions in the tree
+  ### Retrieve all recurring node definitions and place them
+  ### in a separate list
+  recurringNodes <-
+    Traverse(extractionScriptTree,
+             traversal="level",
+             filterFun=function(node) {
+               return(isRecurringEntityDefinition(node,
+                                                  recurringColName=eC$recurringCol));
+             });
+  ### Remove all recursing node definitions from the extraction
+  ### script tree
+  numberOfRecurringEntities <-
+    Prune(extractionScriptTree,
+          pruneFun=function(node) {
+            return(!isRecurringEntityDefinition(node,
+                                                recurringColName=eC$recurringCol));
+          });
+  ### Name the recurring entities
+  names(recurringNodes) <-
+    sapply(recurringNodes, function(x) return(x$name));
+
+  ### Add all recurring node definitions in the tree
   ### where they are included
   extractionScriptTree$Do(function(node,
-                                   recursingColName=eC$recursingCol,
-                                   recursNodes=recursingNodes) {
+                                   recurringColName=eC$recurringCol,
+                                   recurrNodes=recurringNodes) {
 
                             ### Check which recursive node to add
-                            nodeToInclude <- node[[recursingColName]];
+                            nodeToInclude <- node[[recurringColName]];
                             ### Add each child
-                            for (currentChild in recursNodes[[nodeToInclude]]$children) {
+                            for (currentChild in recurrNodes[[nodeToInclude]]$children) {
                               node$AddChildNode(Clone(currentChild));
                             }
 
                           },
                           filterFun = function(node) {
-                            return(isRecursingEntityInclusion(node,
-                                                              recursingColName=eC$recursingCol));
+                            return(isRecurringEntityInclusion(node,
+                                                              recurringColName=eC$recurringCol));
                           });
+  ### Add all recursing node definitions in the tree
+  ### where they are included
+  extractionScriptTree$Do(function(node,
+                                   recursingColName=eC$recursingCol,
+                                   recursNodes=recursingNodes) {
+
+    ### Check which recursive node to add
+    nodeToInclude <- node[[recursingColName]];
+    ### Add each child
+    for (currentChild in recursNodes[[nodeToInclude]]$children) {
+      node$AddChildNode(Clone(currentChild));
+    }
+
+  },
+  filterFun = function(node) {
+    return(isRecursingEntityInclusion(node,
+                                      recursingColName=eC$recursingCol));
+  });
 
   res <- list(extractionScriptTree=extractionScriptTree,
+              recurringNodes=recurringNodes,
               recursingNodes=recursingNodes);
 
+  attr(res, "numberOfRecurringEntities") <- numberOfRecurringEntities;
   attr(res, "numberOfRecursingEntities") <- numberOfRecursingEntities;
 
   class(res) <- "parsedEntities";

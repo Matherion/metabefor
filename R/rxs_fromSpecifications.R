@@ -5,9 +5,9 @@ rxs_fromSpecifications <- function(gs_url = NULL,
                                    entitiesFilename = NULL,
                                    valueTemplatesFilename = NULL,
                                    definitionsFilename = NULL,
-                                   gs_localBackup = list(entities = NULL,
-                                                         valueTemplates= NULL,
-                                                         definitions = NULL),
+                                   localBackup = list(entities = NULL,
+                                                      valueTemplates= NULL,
+                                                      definitions = NULL),
                                    outputFile = NULL,
                                    yamlMetadata = list(title = "Systematic Review Extraction Script Template",
                                                        author = NULL,
@@ -94,28 +94,28 @@ rxs_fromSpecifications <- function(gs_url = NULL,
   }
 
   ### Write local backup, if need be
-  if (!is.null(gs_localBackup$entities)) {
+  if (!is.null(localBackup$entities)) {
     write.csv(entities,
               row.names=FALSE,
-              gs_localBackup$entities);
+              localBackup$entities);
     if (!silent) {
-      cat0("Stored local backup of entities to '", gs_localBackup$entities, "'.\n");
+      cat0("Stored local backup of entities to '", localBackup$entities, "'.\n");
     }
   }
-  if (!is.null(gs_localBackup$valueTemplates)) {
+  if (!is.null(localBackup$valueTemplates)) {
     write.csv(valueTemplates,
               row.names=FALSE,
-              gs_localBackup$valueTemplates);
+              localBackup$valueTemplates);
     if (!silent) {
-      cat0("Stored local backup of value templates to '", gs_localBackup$valueTemplates, "'.\n");
+      cat0("Stored local backup of value templates to '", localBackup$valueTemplates, "'.\n");
     }
   }
-  if (!is.null(gs_localBackup$definitions) && !is.null(definitions)) {
+  if (!is.null(localBackup$definitions) && !is.null(definitions)) {
     write.csv(definitions,
               row.names=FALSE,
-              gs_localBackup$definitions);
+              localBackup$definitions);
     if (!silent) {
-      cat0("Stored local backup of definitions to '", gs_localBackup$definitions, "'.\n");
+      cat0("Stored local backup of definitions to '", localBackup$definitions, "'.\n");
     }
   }
 
