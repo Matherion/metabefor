@@ -12,12 +12,14 @@ print.rxs <- function(studyTree,
       pathString <- node$pathString;
       return(data.frame(path = rep(pathString, length(nodeValue)),
                         entity = names(nodeValue),
-                        nodeValue = unlist(nodeValue)));
+                        nodeValue = unlist(nodeValue),
+                        stringsAsFactors = FALSE));
     } else {
       pathString <- node$parent$pathString;
       return(data.frame(path = pathString,
                         entity = nodeName,
-                        nodeValue = nodeValue));
+                        nodeValue = nodeValue,
+                        stringsAsFactors = FALSE));
     }
   }, filterFun = isLeaf,
   simplify=FALSE);

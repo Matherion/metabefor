@@ -37,7 +37,8 @@ rxs_parseExtractionScripts <- function(path,
 
     ### If successfull, store the result and delete object; otherwise set to NA
     if (exists('study', envir=globalenv())) {
-      res$rxsTrees[[filename]] <- get('study', envir=globalenv());
+      res$rxsTrees[[filename]] <-
+        data.tree::Clone(get('study', envir=globalenv()));
       rm(study, envir=globalenv());
     } else {
       res$rxsTrees[[filename]] <- NA;
