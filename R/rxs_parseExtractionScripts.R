@@ -2,7 +2,8 @@ rxs_parseExtractionScripts <- function(path,
                                        pattern="\\.rxs\\.Rmd",
                                        exclude=c("extractionScriptTemplate.rxs.Rmd",
                                                  "\\[EXCLUDED]"),
-                                       ignore.case=TRUE) {
+                                       ignore.case=TRUE,
+                                       quiet=TRUE) {
 
   res <- list(input = as.list(environment()));
 
@@ -33,8 +34,7 @@ rxs_parseExtractionScripts <- function(path,
     knitr::purl(file.path(path,
                           filename),
                 output=tempR,
-
-                quiet=TRUE);
+                quiet=quiet);
 
     ### Run the other file with error handling
     res$rxsOutput[[filename]] <-
