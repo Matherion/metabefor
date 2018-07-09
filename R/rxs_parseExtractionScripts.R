@@ -1,6 +1,7 @@
 rxs_parseExtractionScripts <- function(path,
                                        pattern="\\.rxs\\.Rmd",
-                                       exclude="extractionScriptTemplate.rxs.Rmd",
+                                       exclude=c("extractionScriptTemplate.rxs.Rmd",
+                                                 "\\[EXCLUDED]"),
                                        ignore.case=TRUE) {
 
   res <- list(input = as.list(environment()));
@@ -13,7 +14,7 @@ rxs_parseExtractionScripts <- function(path,
     allScripts <- grep(exclusionPattern,
                        allScripts,
                        value=TRUE,
-                       invert=FALSE);
+                       invert=TRUE);
   }
 
   res$rxsOutput <- list();
