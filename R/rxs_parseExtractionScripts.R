@@ -26,7 +26,7 @@ rxs_parseExtractionScripts <- function(path,
     ### From https://stackoverflow.com/questions/24753969/knitr-run-all-chunks-in-an-rmarkdown-document
 
     ### Create temporary file
-    tempR <- tempfile(tmpdir = ".", fileext = ".R");
+    tempR <- tempfile(fileext = ".R");
 
     ### Make sure it's deleted when we're done
     on.exit(unlink(tempR));
