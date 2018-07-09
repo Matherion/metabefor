@@ -8,8 +8,13 @@ rxs_parseExtractionScripts <- function(path,
   allScripts <- list.files(path,
                            pattern=pattern,
                            ignore.case=ignore.case);
-  allScripts <- setdiff(allScripts,
-                        exclude);
+
+  for (exclusionPattern in exclude) {
+    allScripts <- grep(exclusionPattern,
+                       allScripts,
+                       value=TRUE,
+                       invert=FALSE);
+  }
 
   res$rxsOutput <- list();
   res$rxsTrees <- list();
