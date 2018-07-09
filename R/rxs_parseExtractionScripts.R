@@ -16,9 +16,17 @@ rxs_parseExtractionScripts <- function(path,
 
   for (filename in allScripts) {
     ### From https://stackoverflow.com/questions/24753969/knitr-run-all-chunks-in-an-rmarkdown-document
+
+    ### Create temporary file
     tempR <- tempfile(tmpdir = ".", fileext = ".R");
+
+    ### Make sure it's deleted when we're done
     on.exit(unlink(tempR));
+
+    ### Extract R chunks and write them to another file
     knitr::purl(file.path(path, filename), output=tempR);
+
+    ### Run the other file with error handling
     res$rxsOutput[[filename]] <-
       capture.output(tryCatch(sys.source(tempR, envir=globalenv())),
                              error = function(e) {
@@ -26,7 +34,9 @@ rxs_parseExtractionScripts <- function(path,
                                print(e);
                                invisible(e);
                              });
-    if (exists(study, envir=globalenv())) {
+
+    ### If successfull, store the result and delete object; otherwise set to NA
+    if (exists('study', envir=globalenv())) {
       res$rxsTrees[[filename]] <- get('study', envir=globalenv());
       rm(study, envir=globalenv());
     } else {
