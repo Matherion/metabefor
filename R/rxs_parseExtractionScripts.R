@@ -27,6 +27,7 @@ rxs_parseExtractionScripts <- function(path,
     knitr::purl(file.path(path,
                           filename),
                 output=tempR,
+
                 quiet=TRUE);
 
     ### Run the other file with error handling
