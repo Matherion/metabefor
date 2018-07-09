@@ -24,7 +24,10 @@ rxs_parseExtractionScripts <- function(path,
     on.exit(unlink(tempR));
 
     ### Extract R chunks and write them to another file
-    knitr::purl(file.path(path, filename), output=tempR);
+    knitr::purl(file.path(path,
+                          filename),
+                output=tempR,
+                quiet=TRUE);
 
     ### Run the other file with error handling
     res$rxsOutput[[filename]] <-
