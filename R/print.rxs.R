@@ -1,6 +1,7 @@
 print.rxs <- function(studyTree,
                       rxsStructure=NULL,
                       knit=TRUE,
+                      headerPrefix = "### ",
                       ...) {
   res <- studyTree$Get(function(node) {
     nodeName <- node$name;
@@ -26,7 +27,7 @@ print.rxs <- function(studyTree,
 
   res <- do.call("rbind", res)
 
-  pandoc.header("Tree of extracted entities", level=1);
+  cat0(headerPrefix, "\n\nTree of extracted entities\n\n");
 
   printableStudyTree <- Clone(studyTree);
   class(printableStudyTree) <- setdiff(class(study), "rxs");
@@ -37,7 +38,7 @@ print.rxs <- function(studyTree,
   suppressWarnings(print(printableStudyTree));
   if (knit) cat("</pre>\n\n");
 
-  pandoc.header("Table with extracted entities and extracted values", level=1);
+  cat0(headerPrefix, "\n\nTable with extracted entities and extracted values\n\n");
 
   if (knit) {
     cat(knitr::knit(text = "\n\n```{r extracted-data-chunk, echo=FALSE, cache=FALSE, message=FALSE, results='markup' }\n  pander(res, row.names=FALSE);\n```\n\n",
