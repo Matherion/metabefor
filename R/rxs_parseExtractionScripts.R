@@ -57,6 +57,8 @@ rxs_parseExtractionScripts <- function(path,
     }
   }
 
+  class(res) <- "rxs_parsedExtractionScripts";
+
   return(res);
 
 }
