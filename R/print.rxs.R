@@ -11,6 +11,10 @@ print.rxs <- function(studyTree,
     }
     if (is.list(nodeValue)) {
       pathString <- node$pathString;
+
+      ### Note - this will become problematic if the list contains
+      ### more complicated values such as vectors or tables!!!
+
       return(data.frame(path = rep(pathString, length(nodeValue)),
                         entity = names(nodeValue),
                         nodeValue = unlist(nodeValue),
