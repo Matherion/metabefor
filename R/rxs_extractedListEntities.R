@@ -18,22 +18,19 @@ rxs_extractedListEntities <- function(rxs,
       if (is.null(values)) {
         return(NULL);
       } else {
-        values <- list(values);
-        names(values) <- studyName;
+        values <- cbind(rep(studyName, nrow(values)),
+                        values);
+        names(values) <- c("study", "path", "entity");
         return(values);
       }
     });
 
-    res <- unlist(res);
+    res <- do.call(rbind, res);
 
-    if (!is.null(res)) {
-      valueNames <- names(res);
-      valueNames <- sub(pattern=paste0('(\\.rxs\\.Rmd)?.?[0-9]*$'),
-                        replacement="",
-                        x=valueNames,
-                        ignore.case=TRUE);
-      names(res) <- valueNames;
-    }
+    res$study <- sub(pattern='(\\.rxs\\.Rmd)?.?[0-9]*$',
+                     replacement="",
+                     x=res$study,
+                     ignore.case=TRUE);
 
     return(res);
 
@@ -68,12 +65,13 @@ rxs_extractedListEntities <- function(rxs,
         pathString <- node$pathString;
         tryCatch(res <- data.frame(path = rep(pathString, length(nodeValue)),
                                    entity = names(nodeValue),
-                                   wasExtracted = !all(is.na(unlist(nodeValue, recursive = FALSE))),
+                                   wasExtracted = sapply(nodeValue, function(x) return(!all(is.na(x)))),
                                    stringsAsFactors = FALSE),
                  error = function(e) {
+                   print(nodeValue);
                    cat0(pathString, "\n\n",
-                        nodeValue);
-                   res <- NULL;
+                        class(nodeValue));
+                   return(NULL);
                  });
         return(res);
       } else {
