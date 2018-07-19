@@ -41,15 +41,9 @@ rxs_fg_list <- function(node,
   if (isTRUE(node[[eC$repeatingCol]])) {
     currentEntityName <- paste0(node$name, repeatingSuffix);
     currentStartEndName <- paste0(node$name, " (REPEATING)");
-    nodeRenaming <- c(paste0(lV$indentSpaces,
-                             returnPathToRoot(node$parent),
-                             "$", currentEntityName, "$name <- ",
-                             returnPathToRoot(node$parent),
-                             "$", currentEntityName, "$value[[1]];"));
   } else {
     currentEntityName <- node$name;
     currentStartEndName <- node$name;
-    nodeRenaming <- NULL;
   }
 
   childAddition <- paste0(lV$indentSpaces,
@@ -98,6 +92,32 @@ rxs_fg_list <- function(node,
                                           fillerCharacter = fillerCharacter,
                                           eC = eC));
   }, filterFun = isLeaf);
+
+  ### If this list has a child entity that is marked as an identifying
+  ### entity, rename it to the value of this entity
+  identifyingEntityName <-
+    node$Get('name',
+             filterFun = function(nd) {
+               return(nd$isLeaf && isTRUE(nd[[eC$identifyingCol]]));
+             });
+
+  if (!is.null(identifyingEntityName)) {
+    nodeRenaming <- c(paste0(lV$indentSpaces,
+                             returnPathToRoot(node$parent),
+                             "$", currentEntityName, "$name <- ",
+                             returnPathToRoot(node$parent),
+                             "$", currentEntityName, "$value[['",
+                             identifyingEntityName[1], "']];"));
+    if (length(identifyingEntityName) > 1) {
+      warning("More than one entity in the list '", node$name,
+              "' is marked as identifying entity. The full ",
+              "list is ", vecTxtQ(identifyingEntityName),
+              ". Only using the first one ('",
+              identifyingEntityName[1], "').");
+    }
+  } else {
+    nodeRenaming <- NULL;
+  }
 
   listElementNames <- node$Get('name', filterFun = isLeaf);
 

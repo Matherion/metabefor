@@ -13,7 +13,8 @@ entityColNames <- function(...) {
            collapsingCol = "collapsing",
            repeatingCol = "repeating",
            recurringCol = "recurring",
-           recursingCol = "recursing");
+           recursingCol = "recursing",
+           identifyingCol = "identifying");
   tweaks <- unlist(list(...));
   presentElements <- names(tweaks) %in% names(res);
   if (!all(presentElements)) {
