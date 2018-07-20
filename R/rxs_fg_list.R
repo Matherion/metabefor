@@ -115,6 +115,17 @@ rxs_fg_list <- function(node,
               ". Only using the first one ('",
               identifyingEntityName[1], "').");
     }
+  } else if (is.null(identifyingEntityName) && isTRUE(node[[eC$repeatingCol]])) {
+
+    ###
+    ###   Check rxs version and behave depending on version!!!
+    ###
+
+    nodeRenaming <- c(paste0(lV$indentSpaces,
+                             returnPathToRoot(node$parent),
+                             "$", currentEntityName, "$name <- ",
+                             returnPathToRoot(node$parent),
+                             "$", currentEntityName, "$value[[1]];"));
   } else {
     nodeRenaming <- NULL;
   }
