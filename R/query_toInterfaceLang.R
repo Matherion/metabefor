@@ -43,28 +43,96 @@ query_toInterfaceLang <- function(queryObject,
   ### Generate Ebscohost Query
   ### First combine terms in each term set using OR
   res$intermediate$ebscohost <- lapply(query, FUN = function(termSet) {
-    return(paste(paste0('"', termSet, '"'), collapse=" OR "));
+    return(paste0("(", paste(paste0('"', termSet, '"'), collapse=" OR "),
+                  ")"));
   });
 
   ### Then, if looking in both title and abstract, double the
   ### termsets with each field specifyer
-  if (length(ebscoHostFields) > 1) {
-    res$intermediate$ebscohost <-
-      lapply(res$intermediate$ebscohost, FUN = function(termSet) {
+  # if (length(ebscoHostFields) > 1) {
+  #   res$intermediate$ebscohost <-
+  #     lapply(ebscoHostFields, FUN = function(x, termSet=termSet) {
+  #       return(paste0(x, " "
+  #     });
+  # }
 
-      });
+  res$intermediate$ebscohost_halfway <- c();
+  for (currentTermSet in res$intermediate$ebscohost) {
+    currentTermSetCollection <- c();
+    for (currentField in ebscoHostFields) {
+      currentTermSetCollection <-
+        append(currentTermSetCollection,
+               paste(currentField, currentTermSet));
+    }
+    res$intermediate$ebscohost_halfway <-
+      append(res$intermediate$ebscohost_halfway,
+             paste0(paste0("(",
+                           currentTermSetCollection,
+                           ")"),
+                    collapse=" OR "));
   }
 
+  res$intermediate$ebscohost_halfway <-
+    paste0("(",
+           res$intermediate$ebscohost_halfway,
+           ")");
 
-  purrr::cross2(ebscoHostFields, paste0("(", l, ")")) %>%
-    map(lift(paste0)) %>%
-    paste(collapse=") OR (")
+  res$output$ebscohost <-
+    paste(res$intermediate$ebscohost_halfway,
+          collapse=" AND ");
 
-  ### Then combine termSets using AND into query
-  res$output$ebscohost <- paste0(ebscoHostFields,
-                                 "((",
-                                 paste0(res$intermediate$ebscohost, collapse = ") AND ("),
-                                 "))");
+  # ### Create all combinations of fields and
+  # ### term sets
+  # res$intermediate$ebscohost_halfway <-
+  #   purrr::cross2(ebscoHostFields,
+  #                 res$intermediate$ebscohost);
+  #
+  # ### Name the result
+  # names(res$intermediate$ebscohost_halfway) <-
+  #   res$intermediate$ebscohost_halfway %>%
+  #   map(.f=function(x) return(x[[2]]));
+  #
+  # ### Paste the field names and term sets together using map,
+  # ### then process further by list name to combine
+  # ### with OR
+  # res$intermediate$ebscohost_halfway <-
+  #   res$intermediate$ebscohost_halfway %>%
+  #   purrr::map(paste, collapse=" ") %>%
+  #   rbind %>%
+  #   t;
+  #
+  # ### Get the names of the term sets
+  # termSetNames <-
+  #   row.names(res$intermediate$ebscohost_halfway);
+  #
+  # ### Convert to dataframe
+  # res$intermediate$ebscohost_halfway <-
+  #   as.data.frame(res$intermediate$ebscohost_halfway,
+  #                 stringsAsFactors=FALSE);
+  #
+  # names(res$intermediate$ebscohost_halfway) <-
+  #   'fieldAndTermSet';
+  #
+  # ### Add row names as variable and remove row names
+  # res$intermediate$ebscohost_halfway$termSet <-
+  #   termSetNames;
+  # row.names(res$intermediate$ebscohost_halfway) <- NULL;
+  #
+  # ### Add parentheses around field/termset combination
+  # res$intermediate$ebscohost_halfway$fieldAndTermSet <-
+  #   paste0("(", res$intermediate$ebscohost_halfway$fieldAndTermSet, ")");
+  #
+  # res$output$ebscohost <-
+  #   res$intermediate$ebscohost_halfway %>%
+  #   dplyr::group_by(termSet) %>%
+  #   dplyr::select(fieldAndTermSet) %>%
+  #   paste(collapse=" AND ")
+  #
+  # ### Then combine termSets using AND into query
+  # res$output$ebscohost <- paste0(ebscoHostFields,
+  #                                "((",
+  #                                paste0(res$intermediate$ebscohost, collapse = ") AND ("),
+  #                                "))");
 
   ### Generate Ovid Query
   ### First combine terms in each term set using OR
