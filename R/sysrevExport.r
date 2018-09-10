@@ -2,7 +2,7 @@ sysrevExport <- function (libraryObject, filename, screeningType=NULL,
                           format="bibtex", drop=NULL, keep=NULL,
                           sep="\t", encoding = "UTF-8",
                           row.names = FALSE, ...) {
-  
+
   ### Check whether we have a dataframe; copy it if it's in the wrong
   ### position
   if (is.null(libraryObject$output$records)) {
@@ -29,8 +29,8 @@ sysrevExport <- function (libraryObject, filename, screeningType=NULL,
            "stored in $records or in $output$records, but the object stored in $output$records ",
            "is not a dataframe!");
     }
-  }  
-  
+  }
+
   ### Check other arguments
   if (FALSE %in% (drop %in% names(libraryObject$output$records))) {
     warning("The following columns (fields) to drop do not exist in the reference library: ",
@@ -47,7 +47,7 @@ sysrevExport <- function (libraryObject, filename, screeningType=NULL,
          "drop, all other fields will be kept; when you specify columns (fields) to keep, ",
          "all other fields will be dropped.");
   }
-  
+
   ### Drop columns if needed
   if(!is.null(drop)) {
     ### Dropping columns (fields) to drop
@@ -61,7 +61,7 @@ sysrevExport <- function (libraryObject, filename, screeningType=NULL,
     ### Write everything
     dataframeToWrite <- libraryObject$output$records;
   }
-  
+
   ### Write records to file
   if (format == "table") {
     ### Write as tab separated file (probably)
@@ -73,11 +73,11 @@ sysrevExport <- function (libraryObject, filename, screeningType=NULL,
   else {
     ### Write in bibtex format
     writable <- dataframeToBibTex(dataframeToWrite, screeningType=screeningType);
-    
+
     ### Replace non-ASCII characters
     #writable <- iconv(writable, "UTF-8", "ASCII//TRANSLIT");
     ### (obsolete - writing output at UTF-8)
-    
+
     ### Write
     con <- file(filename, "w", encoding = encoding);
     writeLines(writable, con);
@@ -85,46 +85,3 @@ sysrevExport <- function (libraryObject, filename, screeningType=NULL,
   }
 }
 
-dataframeToBibTex <- function(dataframe, screeningType) {
-  if (!is.data.frame(dataframe)) {
-    stop("dataframeToBibTex requires a dataframe, but instead, an object of class '", 
-         class(dataframe), "' is provided!");
-  }
-  ### First convert each cell in the data frame to
-  ### a combination of fieldname and value (but skip the 'type')
-  res <- apply(dataframe, 1, 
-               function(x, screeningType=NULL) {
-                 ### Store bibtexkey
-                 if(is.null(x['bibtexkey'])) {
-                   bibtexkey <- ""
-                 }
-                 else {
-                   bibtexkey <- x['bibtexkey'];
-                   ### Also remove it so we don't store it in the reference
-                   x <- x[names(x) != 'bibtexkey'];
-                 }
-                 ### Store reference type
-                 if (!is.null(screeningType)) {
-                   type <- screeningType;
-                 }
-                 else {
-                   if(is.null(x['type'])) {
-                     type <- "misc"
-                   }
-                   else {
-                     type <- x['type'];
-                     ### Also remove it so we don't store it in the reference
-                     x <- x[names(x) != 'type'];
-                   }
-                 }
-                 ### Remove NA values
-                 x <- x[!is.na(x)];
-                 ### Escape pound signs and curly braces
-                 x <- gsub("(#|\\{|\\})", "\\\\\\1", x);
-                 ### Generate and return result
-                 return(c(paste0("@", type, "{", bibtexkey, ","),
-                          paste0("  ", names(x), " = {", x, "},"),
-                          "}", ""));
-               }, screeningType=screeningType);
-  return(unlist(res));
-}

@@ -19,15 +19,15 @@ query_toInterfaceLang <- function(queryObject,
   if (searchInTitle && !searchInAbstract && !searchInTextWords) {
     pubMedFields <- ' [TI]';
     ebscoHostFields <- 'TI ';
-    ovidFields <- '.ti.';
+    ovidFields <- '.ti';
   } else if (searchInTitle && searchInAbstract && !searchInTextWords) {
     pubMedFields <- ' [TIAB]';
-    ebscoHostFields <- 'TI ';
-    ovidFields <- '.ti.ab';
+    ebscoHostFields <- c('TI ', 'AB ');
+    ovidFields <- '.ti,ab';
   } else if (!searchInTitle && !searchInAbstract && searchInTextWords) {
     pubMedFields <- ' [Text Word]';
     ebscoHostFields <- 'TX ';
-    ovidFields <- '.tw.';
+    ovidFields <- '.tw';
   } else {
     stop("Unknown field of combination of fields specified!");
   }
@@ -43,8 +43,23 @@ query_toInterfaceLang <- function(queryObject,
   ### Generate Ebscohost Query
   ### First combine terms in each term set using OR
   res$intermediate$ebscohost <- lapply(query, FUN = function(termSet) {
-    paste(paste0('"', termSet, '"'), collapse=" OR ");
+    return(paste(paste0('"', termSet, '"'), collapse=" OR "));
   });
+
+  ### Then, if looking in both title and abstract, double the
+  ### termsets with each field specifyer
+  if (length(ebscoHostFields) > 1) {
+    res$intermediate$ebscohost <-
+      lapply(res$intermediate$ebscohost, FUN = function(termSet) {
+
+      });
+  }
+
+
+  purrr::cross2(ebscoHostFields, paste0("(", l, ")")) %>%
+    map(lift(paste0)) %>%
+    paste(collapse=") OR (")
+
   ### Then combine termSets using AND into query
   res$output$ebscohost <- paste0(ebscoHostFields,
                                  "((",
