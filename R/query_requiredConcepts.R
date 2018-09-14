@@ -20,7 +20,7 @@ query_requiredConcepts <- function(..., conceptName = NULL) {
       resNode[[childName]]$AddChild(res[[i]][j]);
     }
   }
-  SetGraphStyle(resNode, rankdir = "TB");
+  SetGraphStyle(resNode, rankdir = "LR");
   SetEdgeStyle(resNode,
                arrowhead = "vee",
                color = "#000000",
