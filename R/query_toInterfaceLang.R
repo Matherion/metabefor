@@ -22,7 +22,7 @@ query_toInterfaceLang <- function(queryObject,
     ovidFields <- '.ti';
   } else if (searchInTitle && searchInAbstract && !searchInTextWords) {
     pubMedFields <- ' [TIAB]';
-    ebscoHostFields <- c('TI ', 'AB ');
+    ebscoHostFields <- c('TI', 'AB');
     ovidFields <- '.ti,ab';
   } else if (!searchInTitle && !searchInAbstract && searchInTextWords) {
     pubMedFields <- ' [Text Word]';
