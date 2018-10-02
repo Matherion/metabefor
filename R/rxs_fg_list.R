@@ -132,6 +132,9 @@ rxs_fg_list <- function(node,
 
   listElementNames <- node$Get('name', filterFun = isLeaf);
 
+  entityReferences <- node$Get('entityRef');
+  entityReferences <- entityReferences[!is.na(entityReferences)];
+
   validationAssignmentStart <- paste0(lV$indentSpaces,
                                       returnPathToRoot(node$parent),
                                       "$", currentEntityName,

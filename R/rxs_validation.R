@@ -12,7 +12,13 @@ rxs_validation <- function(studyTree,
               VALUE <- node$value[[valueName]];
               errorMsg <- "";
               validationOutcome <- eval(node$validation[[valueName]]);
-              if (is.logical(validationOutcome) && !validationOutcome) {
+              if (is.na(validationOutcome)) {
+                errorMsg <- paste0("Validation code for value '",
+                                   valueName,
+                                   "' in node '",
+                                   node$name,
+                                   "' evaluated to NA.");
+              } else if (is.logical(validationOutcome) && !validationOutcome) {
                 if (!is.null(rxsStructure)) {
                   ### Find relevant node (entity) and get the valueTemplate
                   ### Then get the error message to use.

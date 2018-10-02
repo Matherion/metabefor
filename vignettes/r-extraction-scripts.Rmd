@@ -1,0 +1,57 @@
+---
+title: "R Extraction Scripts"
+author: "Gjalt-Jorn Peters"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Once sources have been screened, the relevant data have to be extracted from the included sources. `metabefor` can facilitate this process through R Extraction Scripts (abbreviated to Rxs; the corresponding file extension is `.rxs.Rmd`). 
+
+The extraction script is generated based on a spreadsheet that specifies the entities to be extracted from the included sources as well as what kinds of values are accepted for these entities. These specifications can be read from a Google Sheets document as well as from local comma separated values files. `metabefor` function `rxs_fromSpecifications` reads these specifications and writes an Rxs remplate to disk that can then be copied for each source and filled with the extracted information.
+
+These completed Rxs files can then be read into R by `metabefor`'s `rxs_parseExtractionScripts` function, after which the data can be prepared for further analysis, for example using `metafor`.
+
+The first worksheet specifies the entities to extract. It must have the following columns (the names can be different: any deviations must be specified in argument `valueTemplateCols` when calling `rxs_fromSpecifications`):
+
+- `title`: A human-readable title (or name) for the entity.
+- `description`: A human-readable description for the entity. This informs the coder/extractor of what to look for in a source.
+- `identifier`: A unique identifier for this entity.
+- `valueTemplate`: The value template to use. Value templates provide an easy way of specifying the kind of information that can be extracted.
+- `validValues`: Sometimes, an extracted entity is described by one or more of a number of valid values, such as 'male' and 'female'. This field is provided to override the corresponding value template field, if need be.
+- `default`: This specifies the value prefilled in the Rxs template for this entity. This field is provided to override the corresponding value template field, if need be.
+- `examples`: This specifies the example(s) for this field in the Rxs template. This field is provided to override the corresponding value template field, if need be.
+- `parent`: Sometimes, it can be useful to extract data in a hierarchical structure. In such cases, an entity's parent can be specified here. Parent entities cannot contain values that are extracted: they are only used as organisational entities.
+- `entityRef`: If an entity is used to refer back to another entity, the `identifier` of the entity to refer to can be listed here. For example, when extracting means or standard deviations, it has to be clear to which variable they belong. Assuming the variable specification is extracted in another entity, this can be used to specify which entity when extracting. Only entities where `identifying` has been set to `TRUE` can be referred to (see below).
+- `fieldRef`: Sometimes, an entity is used to specify which of several potential field values of another entity a set opf extracted entities refers to. For example, if a study describes multiple groups, and each group is specified as a character vector in one entity, one may want to describe each group separately, requiring referring to the values in that character vector. Thus, where `entityRef` refers back to an entity (more accurately, the parent entity), `fieldRef` refers back to an extracted value.
+- `owner`: Sometimes, multiple fields are required to properly extract data about a given entity. If during validation, it is important to check that every extracted entity is further specified by data in another extracted entity, the `owner` field can be used to specify this link.
+- `list`: If multiple closely related entities are extracted (e.g. effect sizes), it is often more efficient to extract these in a entity list than by creating a single extractable entity for each entity. By setting `list` to `TRUE`, this can be realised.
+- `collapsing`: 
+- `repeating`:
+- `recurring`: A recurring entity can be included multiple times in an extraction script. This prevents repetition, which ensures consistency and enables `recursing` entities (see below).
+- `recursing`: A recursing entity is an entiy that can contain itself. This extraction pattern is not often needed.
+- `identifying`: If an entity is an `identifying` entity, that means it is used to identify the containing (parent) entity. This is used when referring to other entities using `entityRef` and/or `fieldRef`.
+
+The value templates contain the following columns:
+
+- `identifier`: 
+- `description`: 
+- `validValues`: 
+- `default`: 
+- `examples`: 
+- `validation`: 
+- `error`: 
+
+
+
+

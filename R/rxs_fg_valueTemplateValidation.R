@@ -109,7 +109,7 @@ rxs_fg_valueTemplateValidation <- function(node,
       ### It's multiple elements, so change it into a valid vector
       fieldNameReplacementContents <-
         paste0("c(",
-               paste0(trim(unlist(strsplit(fullReplacementList[i],
+               paste0(trim(unlist(strsplit(gsub("\n", " ", fullReplacementList[i]),
                                            "||", fixed=TRUE))),
                       collapse=", "),
                ")");

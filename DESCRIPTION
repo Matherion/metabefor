@@ -12,3 +12,7 @@ Description: The metabefor package is intended to assist with
 License: GPL (>= 2)
 URL: http://userfriendlyscience.com?metabefor
 Imports: plyr, xtable
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

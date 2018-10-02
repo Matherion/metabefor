@@ -3,6 +3,7 @@ rxs_parseExtractionScripts <- function(path,
                                        exclude=c("extractionScriptTemplate.rxs.Rmd",
                                                  "\\[EXCLUDED]"),
                                        ignore.case=TRUE,
+                                       recursive=TRUE,
                                        quiet=TRUE,
                                        encoding="UTF-8") {
 
@@ -10,7 +11,8 @@ rxs_parseExtractionScripts <- function(path,
 
   allScripts <- list.files(path,
                            pattern=pattern,
-                           ignore.case=ignore.case);
+                           ignore.case=ignore.case,
+                           recursive=recursive);
 
   for (exclusionPattern in exclude) {
     allScripts <- grep(exclusionPattern,
