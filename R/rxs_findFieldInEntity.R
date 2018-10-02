@@ -1,6 +1,6 @@
 rxs_findFieldInEntity <- function(node, id, value) {
-  if (node$value$
-  entity <- rxs_findEntity(
+  # if (node$value$
+  # entity <- rxs_findEntity(
   return(length(Traverse(node$root,
                          filterFun=function(nd) {
                            if (is.null(nd$value)) {
