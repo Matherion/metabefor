@@ -23,7 +23,12 @@ rxs_fg_defaultValueAssignment <- function(node,
                           commentCharacter = commentCharacter,
                           fillerCharacter = fillerCharacter);
 
-  if (!(node[[eC$valueTemplateCol]] %in% names(valueTemplates))) {
+  if (is.na(node[[eC$valueTemplateCol]]) ||
+    is.null(node[[eC$valueTemplateCol]]) ||
+    nchar(node[[eC$valueTemplateCol]]) == 0) {
+    stop("In the entity specifications, the value template for '",
+         node$name, "' is not specified!");
+  } else if (!(node[[eC$valueTemplateCol]] %in% names(valueTemplates))) {
     stop("The value template specified in the entity specification '",
          node[[eC$valueTemplateCol]],
          "' does not exist in the list of value template specifications!");
