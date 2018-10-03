@@ -23,7 +23,7 @@ rxs_fg_defaultValueAssignment <- function(node,
                           commentCharacter = commentCharacter,
                           fillerCharacter = fillerCharacter);
 
-  if (!(node[[eC$recursingCol]] || node[[eC$recurringCol]])) {
+  if ((nchar(node[[eC$recursingCol]]) > 0) || (nchar(node[[eC$recurringCol]]) > 0)) {
     return("");
   }
   
