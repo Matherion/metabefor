@@ -16,6 +16,10 @@ rxs_fg_valueTemplateValidation <- function(node,
          "(but instead ", vecTxtQ(class(parsedValueTemplates)), ").");
   }
 
+  if (isTRUE(nchar(node[[eC$recursingCol]]) > 0) || isTRUE(nchar(node[[eC$recurringCol]]) > 0)) {
+    return("");
+  }
+
   if (is.na(node[[eC$valueTemplateCol]]) ||
     is.null(node[[eC$valueTemplateCol]]) ||
     nchar(node[[eC$valueTemplateCol]]) == 0) {
