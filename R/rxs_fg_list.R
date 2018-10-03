@@ -133,8 +133,8 @@ rxs_fg_list <- function(node,
   listElementNames <- node$Get('name', filterFun = isLeaf);
 
   entityReferences <- node$Get('entityRef');
+  entityReferences <- entityReferences[!is.na(entityReferences)];
   if (length(entityReferences) > 0) {
-    entityReferences <- entityReferences[!is.na(entityReferences)];
     entityReferences <- paste0("c(",
                                paste0(names(entityReferences), '="', entityReferences, '"',
                                       collapse=", "),
@@ -145,13 +145,12 @@ rxs_fg_list <- function(node,
                                "[['entityRefs']] <- ",
                                entityReferences);
   } else {
-
     entityReferences <- NULL;
   }
 
   fieldReferences <- node$Get('fieldRef');
+  fieldReferences <- fieldReferences[!is.na(fieldReferences)];
   if (length(fieldReferences) > 0) {
-    fieldReferences <- fieldReferences[!is.na(fieldReferences)];
     fieldReferences <- paste0("c(",
                               paste0(names(fieldReferences), '="', fieldReferences, '"',
                                      collapse=", "),
@@ -162,7 +161,6 @@ rxs_fg_list <- function(node,
                               "[['fieldRefs']] <- ",
                               fieldReferences);
   } else {
-
     fieldReferences <- NULL;
   }
 
