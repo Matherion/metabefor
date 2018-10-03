@@ -23,6 +23,10 @@ rxs_fg_defaultValueAssignment <- function(node,
                           commentCharacter = commentCharacter,
                           fillerCharacter = fillerCharacter);
 
+  if (!(node[[eC$recursingCol]] || node[[eC$recurringCol]])) {
+    return("");
+  }
+  
   if (is.na(node[[eC$valueTemplateCol]]) ||
     is.null(node[[eC$valueTemplateCol]]) ||
     nchar(node[[eC$valueTemplateCol]]) == 0) {
