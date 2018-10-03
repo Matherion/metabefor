@@ -133,28 +133,36 @@ rxs_fg_list <- function(node,
   listElementNames <- node$Get('name', filterFun = isLeaf);
 
   entityReferences <- node$Get('entityRef');
-  entityReferences <- entityReferences[!is.na(entityReferences)];
-  entityReferences <- paste0("c(",
-                             paste0(names(entityReferences), '="', entityReferences, '"',
-                                    collapse=", "),
-                             ");");
-  fieldReferences <- node$Get('fieldRef');
-  fieldReferences <- fieldReferences[!is.na(fieldReferences)];
-  fieldReferences <- paste0("c(",
-                            paste0(names(fieldReferences), '="', fieldReferences, '"',
-                                   collapse=", "),
-                            ");");
+  if (length(entityReferences) > 0) {
+    entityReferences <- entityReferences[!is.na(entityReferences)];
+    entityReferences <- paste0("c(",
+                               paste0(names(entityReferences), '="', entityReferences, '"',
+                                      collapse=", "),
+                               ");");
+    entityReferences <- paste0(lV$indentSpaces,
+                               returnPathToRoot(node$parent),
+                               "$", currentEntityName,
+                               "[['entityRefs']] <- ",
+                               entityReferences);
+  } else {
+    entityReferences <- NULL;
+  }
 
-  entityReferences <- paste0(lV$indentSpaces,
-                             returnPathToRoot(node$parent),
-                             "$", currentEntityName,
-                             "[['entityRefs']] <- ",
-                             entityReferences);
-  fieldReferences <- paste0(lV$indentSpaces,
-                            returnPathToRoot(node$parent),
-                            "$", currentEntityName,
-                            "[['fieldRefs']] <- ",
-                            fieldReferences);
+  fieldReferences <- node$Get('fieldRef');
+  if (length(fieldReferences) > 0) {
+    fieldReferences <- fieldReferences[!is.na(fieldReferences)];
+    fieldReferences <- paste0("c(",
+                              paste0(names(fieldReferences), '="', fieldReferences, '"',
+                                     collapse=", "),
+                              ");");
+    fieldReferences <- paste0(lV$indentSpaces,
+                              returnPathToRoot(node$parent),
+                              "$", currentEntityName,
+                              "[['fieldRefs']] <- ",
+                              fieldReferences);
+  } else {
+    fieldReferences <- NULL;
+  }
 
   validationAssignmentStart <- paste0(lV$indentSpaces,
                                       returnPathToRoot(node$parent),
