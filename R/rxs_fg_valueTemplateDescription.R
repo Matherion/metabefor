@@ -13,8 +13,12 @@ rxs_fg_valueTemplateDescription <- function(node,
   ### an extractable entity.
 
   if (!("parsedValueTemplates" %in% class(valueTemplates))) {
-    stop("Argment 'valueTemplates' does not have class 'parsedValueTemplates' ",
+    stop("Argument 'valueTemplates' does not have class 'parsedValueTemplates' ",
          "(but instead ", vecTxtQ(class(parsedValueTemplates)), ").");
+  }
+
+  if (isTRUE(nchar(node[[eC$recursingCol]]) > 0) || isTRUE(nchar(node[[eC$recurringCol]]) > 0)) {
+    return("");
   }
 
   if (is.na(node[[eC$valueTemplateCol]]) ||

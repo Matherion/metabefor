@@ -12,7 +12,7 @@ rxs_fg_defaultValueAssignment <- function(node,
   ### an extractable entity.
 
   if (!("parsedValueTemplates" %in% class(valueTemplates))) {
-    stop("Argment 'valueTemplates' does not have class 'parsedValueTemplates' ",
+    stop("Argument 'valueTemplates' does not have class 'parsedValueTemplates' ",
          "(but instead ", vecTxtQ(class(parsedValueTemplates)), ").");
   }
 
