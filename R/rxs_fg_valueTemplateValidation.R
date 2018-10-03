@@ -16,7 +16,13 @@ rxs_fg_valueTemplateValidation <- function(node,
          "(but instead ", vecTxtQ(class(parsedValueTemplates)), ").");
   }
 
-  valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
+  if (!(node[[eC$valueTemplateCol]] %in% names(valueTemplates))) {
+    stop("The value template specified in the entity specification '",
+         node[[eC$valueTemplateCol]],
+         "' does not exist in the list of value template specifications!");
+  } else {                
+    valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
+  }
 
   res <- NA;
 

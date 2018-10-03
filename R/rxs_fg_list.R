@@ -134,6 +134,27 @@ rxs_fg_list <- function(node,
 
   entityReferences <- node$Get('entityRef');
   entityReferences <- entityReferences[!is.na(entityReferences)];
+  entityReferences <- paste0("c(",
+                             paste0(names(entityReferences), '="', entityReferences, '"',
+                                    collapse=", "),
+                             ");");
+  fieldReferences <- node$Get('fieldRef');
+  fieldReferences <- fieldReferences[!is.na(fieldReferences)];
+  fieldReferences <- paste0("c(",
+                            paste0(names(fieldReferences), '="', fieldReferences, '"',
+                                   collapse=", "),
+                            ");");
+
+  entityReferences <- paste0(lV$indentSpaces,
+                             returnPathToRoot(node$parent),
+                             "$", currentEntityName,
+                             "[['entityRefs']] <- ",
+                             entityReferences);
+  fieldReferences <- paste0(lV$indentSpaces,
+                            returnPathToRoot(node$parent),
+                            "$", currentEntityName,
+                            "[['fieldRefs']] <- ",
+                            fieldReferences);
 
   validationAssignmentStart <- paste0(lV$indentSpaces,
                                       returnPathToRoot(node$parent),
@@ -257,6 +278,8 @@ rxs_fg_list <- function(node,
                 lV$lineFiller,
                 validationAssignment,
                 nodeRenaming,
+                entityReferences,
+                fieldReferences,
                 lV$lineFiller,
                 closingTxt,
                 lV$lineFiller)));
