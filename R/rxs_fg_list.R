@@ -145,6 +145,7 @@ rxs_fg_list <- function(node,
                                "[['entityRefs']] <- ",
                                entityReferences);
   } else {
+
     entityReferences <- NULL;
   }
 
@@ -161,6 +162,7 @@ rxs_fg_list <- function(node,
                               "[['fieldRefs']] <- ",
                               fieldReferences);
   } else {
+
     fieldReferences <- NULL;
   }
 
