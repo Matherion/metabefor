@@ -172,7 +172,7 @@ rxs_fg_valueTemplateExamples <- function(node,
                             commentCharacter = commentCharacter,
                             fillerCharacter = fillerCharacter);
     res <- paste0(lV$commentPrefix, trim(unlist(strsplit(res, "||", fixed=TRUE))));
-  } else
+  }
 
   if (!listVersion) {
     if (length(res) > 1) {
