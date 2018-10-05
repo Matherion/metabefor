@@ -50,6 +50,9 @@ rxs_fg_valueTemplateExamples <- function(node,
     return(NULL);
   }
 
+  ### Sanitize returns
+  res <- gsub('\n', ' ', res);
+
   # ### Do fieldname replacement using regular expressions, if need be
   # allEntityFieldNames <- paste0("<<", eC, ">>");
   # allValueTemplateFieldNames <- paste0("<<", valueTemplateColNames(), ">>");
@@ -157,8 +160,6 @@ rxs_fg_valueTemplateExamples <- function(node,
 
 
 
-  ### Sanitize returns
-  res <- gsub('\n', ' ', res);
 
   if (listVersion) {
     res <- trim(unlist(strsplit(res, "||", fixed=TRUE)));
