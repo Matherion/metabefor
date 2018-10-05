@@ -20,7 +20,7 @@ rxs_fg_valueTemplateExamples <- function(node,
   if (isTRUE(nchar(node[[eC$recursingCol]]) > 0) || isTRUE(nchar(node[[eC$recurringCol]]) > 0)) {
     return("");
   }
-  
+
   if (is.na(node[[eC$valueTemplateCol]]) ||
     is.null(node[[eC$valueTemplateCol]]) ||
     nchar(node[[eC$valueTemplateCol]]) == 0) {
@@ -30,7 +30,7 @@ rxs_fg_valueTemplateExamples <- function(node,
     stop("The value template specified in the entity specification '",
          node[[eC$valueTemplateCol]],
          "' does not exist in the list of value template specifications!");
-  } else {                
+  } else {
     valueTemplate <- valueTemplates[[node[[eC$valueTemplateCol]]]];
   }
 
@@ -157,6 +157,9 @@ rxs_fg_valueTemplateExamples <- function(node,
 
 
 
+  ### Sanitize returns
+  res <- gsub('\n', ' ', res);
+
   if (listVersion) {
     res <- trim(unlist(strsplit(res, "||", fixed=TRUE)));
     return(res);
@@ -168,7 +171,7 @@ rxs_fg_valueTemplateExamples <- function(node,
                             commentCharacter = commentCharacter,
                             fillerCharacter = fillerCharacter);
     res <- paste0(lV$commentPrefix, trim(unlist(strsplit(res, "||", fixed=TRUE))));
-  }
+  } else
 
   if (!listVersion) {
     if (length(res) > 1) {
