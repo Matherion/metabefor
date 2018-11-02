@@ -162,6 +162,12 @@ rxs_fg_valueTemplateExamples <- function(node,
 
 
   if (listVersion) {
+    lV <- rxs_fg_layoutVars(level = level,
+                            indent = indent,
+                            indentSpaces = indentSpaces,
+                            fullWidth = fullWidth,
+                            commentCharacter = commentCharacter,
+                            fillerCharacter = fillerCharacter);
     res <- paste0(lV$commentPrefix,
                   trim(unlist(strsplit(res, "||", fixed=TRUE))));
     #res <- trim(unlist(strsplit(res, "||", fixed=TRUE)));
