@@ -51,7 +51,7 @@ rxs_fg_valueTemplateExamples <- function(node,
   }
 
   ### Sanitize returns and multiple whitespaces
-  res <- gsub('[\\s\\n]+', ' ', res);
+  res <- gsub('\\n', ' ', res);
 
   # ### Do fieldname replacement using regular expressions, if need be
   # allEntityFieldNames <- paste0("<<", eC, ">>");
