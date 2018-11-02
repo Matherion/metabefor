@@ -50,7 +50,7 @@ rxs_fg_valueTemplateExamples <- function(node,
     return(NULL);
   }
 
-  ### Sanitize returns
+  ### Sanitize returns and multiple whitespaces
   res <- gsub('[\\s\\n]+', ' ', res);
 
   # ### Do fieldname replacement using regular expressions, if need be
@@ -162,7 +162,9 @@ rxs_fg_valueTemplateExamples <- function(node,
 
 
   if (listVersion) {
-    res <- trim(unlist(strsplit(res, "||", fixed=TRUE)));
+    res <- paste0(lV$commentPrefix,
+                  trim(unlist(strsplit(res, "||", fixed=TRUE))));
+    #res <- trim(unlist(strsplit(res, "||", fixed=TRUE)));
     return(res);
   } else {
     lV <- rxs_fg_layoutVars(level = level,
@@ -171,7 +173,8 @@ rxs_fg_valueTemplateExamples <- function(node,
                             fullWidth = fullWidth,
                             commentCharacter = commentCharacter,
                             fillerCharacter = fillerCharacter);
-    res <- paste0(lV$commentPrefix, trim(unlist(strsplit(res, "||", fixed=TRUE))));
+    res <- paste0(lV$commentPrefix,
+                  trim(unlist(strsplit(res, "||", fixed=TRUE))));
   }
 
   if (!listVersion) {
