@@ -43,7 +43,7 @@ print.rxs <- function(studyTree,
       pathString <- node$parent$pathString;
       return(data.frame(path = pathString,
                         entity = nodeName,
-                        nodeValue = nodeValue,
+                        nodeValue = flattenNodeValues(nodeValue),
                         stringsAsFactors = FALSE));
     }
   }, filterFun = isLeaf,
