@@ -3,6 +3,26 @@ print.rxs <- function(studyTree,
                       knit=TRUE,
                       headerPrefix = "### ",
                       ...) {
+
+  flattenNodeValues <- function(x) {
+    res <- lapply(x, function(singleValue) {
+      if (is.null(singleValue)) {
+        return(NULL);
+      } else if (all(is.na(singleValue))) {
+        return(NA);
+      } else if (length(singleValue) == 1) {
+        return(singleValue);
+      } else if (is.vector(singleValue)) {
+        return(ufs::vecTxtQ(singleValue));
+      } else if (is.matrix(singleValue)) {
+        return(paste(apply(singleValue, 1, vecTxtQ), collapse="\n"));
+      } else {
+        return(capture.output(str(singleValue)));
+      }
+    });
+    return(unlist(res));
+  }
+
   res <- studyTree$Get(function(node) {
     nodeName <- node$name;
     nodeValue <- node$value;
@@ -17,7 +37,7 @@ print.rxs <- function(studyTree,
 
       return(data.frame(path = rep(pathString, length(nodeValue)),
                         entity = names(nodeValue),
-                        nodeValue = unlist(nodeValue),
+                        nodeValue = flattenNodeValues(nodeValue),
                         stringsAsFactors = FALSE));
     } else {
       pathString <- node$parent$pathString;
@@ -27,7 +47,7 @@ print.rxs <- function(studyTree,
                         stringsAsFactors = FALSE));
     }
   }, filterFun = isLeaf,
-  simplify=FALSE);
+     simplify=FALSE);
 
   res <- do.call("rbind", res)
 
