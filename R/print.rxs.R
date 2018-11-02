@@ -5,6 +5,7 @@ print.rxs <- function(studyTree,
                       ...) {
 
   flattenNodeValues <- function(x) {
+    if (!is.list(x)) x <- list(x);
     res <- lapply(x, function(singleValue) {
       if (is.null(singleValue)) {
         return(NULL);
@@ -27,7 +28,7 @@ print.rxs <- function(studyTree,
     nodeName <- node$name;
     nodeValue <- node$value;
     if (is.null(nodeValue)) {
-      nodeValue <- "";
+      nodeValue <- "NULL (element absent from extraction script)";
     }
     if (is.list(nodeValue)) {
       pathString <- node$pathString;
