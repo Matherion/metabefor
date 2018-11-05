@@ -55,7 +55,7 @@ print.rxs <- function(studyTree,
   cat0(headerPrefix, "\n\nTree of extracted entities\n\n");
 
   printableStudyTree <- Clone(studyTree);
-  class(printableStudyTree) <- setdiff(class(study), "rxs");
+  class(printableStudyTree) <- setdiff(class(studyTree), "rxs");
 
   if (knit) cat("\n\n<pre>");
   ### Suppress warnings until bug in data.tree is fixed, see:
