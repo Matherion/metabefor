@@ -4,7 +4,7 @@ rxs_parseExtractionScripts <- function(path,
                                                  "\\[EXCLUDED]"),
                                        ignore.case=TRUE,
                                        recursive=TRUE,
-                                       quiet=TRUE,
+                                       quiet=FALSE,
                                        encoding="UTF-8") {
 
   res <- list(input = as.list(environment()));
@@ -41,19 +41,33 @@ rxs_parseExtractionScripts <- function(path,
                                           quiet=quiet,
                                           encoding=encoding),
                               error = function(e) {
-                                cat0("\n\nEncountered error while purling: \n\n");
-                                print(e);
+                                cat0("Encountered error while purling: \n\n");
+                                print(e$message);
                                 invisible(e);
                               }));
+
+    if (!quiet) {
+      if (any(grepl("Encountered error while purling",
+                    res$rxsPurlingOutput[[filename]]))) {
+        cat(res$rxsPurlingOutput[[filename]]);
+      }
+    }
 
     ### Run the other file with error handling
     res$rxsOutput[[filename]] <-
       capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
                               error = function(e) {
-                                cat0("\n\nEncountered error while running rxs: \n\n");
-                                print(e);
+                                cat0("Encountered error while running rxs: \n\n");
+                                print(e$message);
                                 invisible(e);
                               }));
+
+    if (!quiet) {
+      if (any(grepl("Encountered error while running rxs",
+                    res$rxsPurlingOutput[[filename]]))) {
+        cat(res$rxsPurlingOutput[[filename]]);
+      }
+    }
 
     ### If successfull, store the result and delete object; otherwise set to NA
     if (exists('study', envir=globalenv())) {
