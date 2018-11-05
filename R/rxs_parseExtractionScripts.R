@@ -43,7 +43,8 @@ rxs_parseExtractionScripts <- function(path,
                                           encoding=encoding),
                               error = function(e) {
                                 return(paste0(c("Encountered error while purling: \n\n",
-                                                e$message),
+                                                e$message,
+                                                "\n"),
                                               collapse="\n"));
                               }));
 
@@ -59,7 +60,8 @@ rxs_parseExtractionScripts <- function(path,
       capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
                               error = function(e) {
                                 return(paste0(c("Encountered error while running rxs: \n\n",
-                                                e$message),
+                                                e$message,
+                                                "\n"),
                                               collapse="\n"));
                                 # cat(e$message);
                                 # invisible(e);
