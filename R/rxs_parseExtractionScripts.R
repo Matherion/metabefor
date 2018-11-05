@@ -42,52 +42,53 @@ rxs_parseExtractionScripts <- function(path,
                                           quiet=quiet,
                                           encoding=encoding),
                               error = function(e) {
-                                cat(paste0(c("In file '",
-                                             filename,
-                                             "', encountered error while purling: \n",
-                                             e$message,
-                                             "\n\n"),
+                                cat(paste0("In file '",
+                                           filename,
+                                           "', encountered error while purling: \n",
+                                           e$message,
+                                           "\n\n",
                                            collapse="\n"));
                                 invisible(e);
                               }));
 
-    if (showErrors) {
-      if (any(grepl("In file '",
+    if (any(grepl("In file '",
                     filename,
                     "', encountered error while purling",
                     res$rxsPurlingOutput[[filename]]))) {
+      res$rxsOutput[[filename]] <-
+        "Could not run this extraction script because of purling problems."
+      if (showErrors) {
         cat(paste0(res$rxsPurlingOutput[[filename]], collapse="\n"));
       }
-    }
-
-    ### Run the other file with error handling
-    res$rxsOutput[[filename]] <-
-      capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
-                              error = function(e) {
-                                cat(paste0(c("In file '",
+    } else {
+      ### Run the other file with error handling
+      res$rxsOutput[[filename]] <-
+        capture.output(tryCatch(sys.source(tempR, envir=parent.frame()),
+                                error = function(e) {
+                                  cat(paste0("In file '",
                                              filename,
                                              "', encountered error while running rxs: \n",
                                              e$message,
-                                             "\n\n"),
-                                           collapse="\n"));
-                                # cat(e$message);
-                                invisible(e);
-                              }));
-
-    if (showErrors) {
-      if (any(grepl("In file '",
-                    filename,
-                    "', encountered error while running rxs",
-                    res$rxsOutput[[filename]]))) {
-        cat(paste0(res$rxsOutput[[filename]], collapse="\n"));
+                                             "\n\n",
+                                             collapse="\n"));
+                                  # cat(e$message);
+                                  invisible(e);
+                                }));
+      if (showErrors) {
+        if (any(grepl("In file '",
+                      filename,
+                      "', encountered error while running rxs",
+                      res$rxsOutput[[filename]]))) {
+          cat(paste0(res$rxsOutput[[filename]], collapse="\n"));
+        }
       }
     }
 
-    ### If successfull, store the result and delete object; otherwise set to NA
-    if (exists('study', envir=globalenv())) {
+    ### If successful, store the result and delete object; otherwise set to NA
+    if (exists('study', envir=parent.frame())) {
       res$rxsTrees[[filename]] <-
-        data.tree::Clone(get('study', envir=globalenv()));
-      rm(study, envir=globalenv());
+        data.tree::Clone(get('study', envir=parent.frame()));
+      rm(study, envir=parent.frame());
     } else {
       res$rxsTrees[[filename]] <- NA;
     }
