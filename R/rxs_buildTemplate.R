@@ -81,7 +81,7 @@ rxs_buildTemplate <- function(rxsStructure,
                   "---",
                   "");
 
-  setupChunk <- c("```{r setup, include=FALSE, messages=FALSE}",
+  setupChunk <- c("```{r rxsChunk-setup, include=FALSE, messages=FALSE}",
                   "### First load (and perhaps install) userfriendlyscience",
                   "if (!require('userfriendlyscience')) {",
                   "  install.packages('userfriendlyscience');",
@@ -121,7 +121,7 @@ rxs_buildTemplate <- function(rxsStructure,
            c(character(length(valueTemplateCols)-1), ");"), collapse=",\n");
 
 
-  fieldnameChunk <- c("```{r fieldname-chunk}",
+  fieldnameChunk <- c("```{r rxsChunk-fieldnames}",
                       printable_eC,
                       "",
                       printableValueTemplateCols,
@@ -134,11 +134,11 @@ rxs_buildTemplate <- function(rxsStructure,
                               "```");
   }
 
-  showExtractedDataChunk <- c("```{r show-extracted-data-chunk, results='asis'}",
+  showExtractedDataChunk <- c("```{r rxsChunk-show-extracted-data, results='asis'}",
                               "print.rxs(study);",
                               "```");
 
-  validationChunk <- c("```{r validation-chunk, results='asis'}",
+  validationChunk <- c("```{r rxsChunk-validation, results='asis'}",
                        "rxs_validation(study);",
                        "pandoc.header('Validation results', level=1)",
                        "#rxs_validation(study,",

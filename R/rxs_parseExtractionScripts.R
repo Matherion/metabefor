@@ -63,7 +63,7 @@ rxs_parseExtractionScripts <- function(path,
     } else {
       ### Run the other file with error handling
       res$rxsOutput[[filename]] <-
-        capture.output(tryCatch(sys.source(tempR, envir=parent.frame()),
+        capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
                                 error = function(e) {
                                   cat(paste0("In file '",
                                              filename,
@@ -85,10 +85,10 @@ rxs_parseExtractionScripts <- function(path,
     }
 
     ### If successful, store the result and delete object; otherwise set to NA
-    if (exists('study', envir=parent.frame())) {
+    if (exists('study', envir=globalenv())) {
       res$rxsTrees[[filename]] <-
-        data.tree::Clone(get('study', envir=parent.frame()));
-      rm(study, envir=parent.frame());
+        data.tree::Clone(get('study', envir=globalenv()));
+      rm(study, envir=globalenv());
     } else {
       res$rxsTrees[[filename]] <- NA;
     }
