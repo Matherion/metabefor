@@ -34,20 +34,26 @@ rxs_parseExtractionScripts <- function(path,
     on.exit(unlink(tempR));
 
     ### Extract R chunks and write them to another file
-    knitr::purl(file.path(path,
-                          filename),
-                output=tempR,
-                quiet=quiet,
-                encoding=encoding);
+    res$rxsPurlingOutput[[filename]] <-
+      capture.output(tryCatch(knitr::purl(file.path(path,
+                                                    filename),
+                                          output=tempR,
+                                          quiet=quiet,
+                                          encoding=encoding),
+                              error = function(e) {
+                                cat0("\n\nEncountered error while purling: \n\n");
+                                print(e);
+                                invisible(e);
+                              }));
 
     ### Run the other file with error handling
     res$rxsOutput[[filename]] <-
-      capture.output(tryCatch(sys.source(tempR, envir=globalenv())),
-                             error = function(e) {
-                               cat0("\n\nEncountered error: \n\n");
-                               print(e);
-                               invisible(e);
-                             });
+      capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
+                              error = function(e) {
+                                cat0("\n\nEncountered error while running rxs: \n\n");
+                                print(e);
+                                invisible(e);
+                              }));
 
     ### If successfull, store the result and delete object; otherwise set to NA
     if (exists('study', envir=globalenv())) {
