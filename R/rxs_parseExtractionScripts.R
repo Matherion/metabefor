@@ -64,8 +64,8 @@ rxs_parseExtractionScripts <- function(path,
 
     if (!quiet) {
       if (any(grepl("Encountered error while running rxs",
-                    res$rxsPurlingOutput[[filename]]))) {
-        cat(res$rxsPurlingOutput[[filename]]);
+                    res$rxsOutput[[filename]]))) {
+        cat(res$rxsOutput[[filename]]);
       }
     }
 
