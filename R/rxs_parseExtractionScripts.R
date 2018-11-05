@@ -42,7 +42,9 @@ rxs_parseExtractionScripts <- function(path,
                                           quiet=quiet,
                                           encoding=encoding),
                               error = function(e) {
-                                cat(paste0(c("Encountered error while purling: \n",
+                                cat(paste0(c("In file '",
+                                             filename,
+                                             "', encountered error while purling: \n",
                                              e$message,
                                              "\n\n"),
                                            collapse="\n"));
@@ -50,7 +52,9 @@ rxs_parseExtractionScripts <- function(path,
                               }));
 
     if (showErrors) {
-      if (any(grepl("Encountered error while purling",
+      if (any(grepl("In file '",
+                    filename,
+                    "', encountered error while purling",
                     res$rxsPurlingOutput[[filename]]))) {
         cat(paste0(res$rxsPurlingOutput[[filename]], collapse="\n"));
       }
@@ -60,7 +64,9 @@ rxs_parseExtractionScripts <- function(path,
     res$rxsOutput[[filename]] <-
       capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
                               error = function(e) {
-                                cat(paste0(c("Encountered error while running rxs: \n",
+                                cat(paste0(c("In file '",
+                                             filename,
+                                             "', encountered error while running rxs: \n",
                                              e$message,
                                              "\n\n"),
                                            collapse="\n"));
@@ -69,7 +75,9 @@ rxs_parseExtractionScripts <- function(path,
                               }));
 
     if (showErrors) {
-      if (any(grepl("Encountered error while running rxs",
+      if (any(grepl("In file '",
+                    filename,
+                    "', encountered error while running rxs",
                     res$rxsOutput[[filename]]))) {
         cat(paste0(res$rxsOutput[[filename]], collapse="\n"));
       }
