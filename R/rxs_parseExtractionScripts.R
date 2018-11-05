@@ -4,7 +4,8 @@ rxs_parseExtractionScripts <- function(path,
                                                  "\\[EXCLUDED]"),
                                        ignore.case=TRUE,
                                        recursive=TRUE,
-                                       quiet=FALSE,
+                                       quiet=TRUE,
+                                       showErrors=TRUE,
                                        encoding="UTF-8") {
 
   res <- list(input = as.list(environment()));
@@ -45,7 +46,7 @@ rxs_parseExtractionScripts <- function(path,
                                 return(paste0(e$message, collapse="\n"));
                               }));
 
-    if (!quiet) {
+    if (showErrors) {
       if (any(grepl("Encountered error while purling",
                     res$rxsPurlingOutput[[filename]]))) {
         cat(res$rxsPurlingOutput[[filename]]);
@@ -62,7 +63,7 @@ rxs_parseExtractionScripts <- function(path,
                                 # invisible(e);
                               }));
 
-    if (!quiet) {
+    if (showErrors) {
       if (any(grepl("Encountered error while running rxs",
                     res$rxsOutput[[filename]]))) {
         cat(res$rxsOutput[[filename]]);
