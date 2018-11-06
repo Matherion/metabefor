@@ -133,7 +133,7 @@ rxs_parseExtractionScripts <- function(path,
     }
 
     if (interactive()) {
-      p$tick();
+      p$tick()$print();
     };
 
   }
