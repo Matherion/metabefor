@@ -41,7 +41,9 @@ rxs_parseExtractionScripts <- function(path,
     ### Make sure it's deleted when we're done
     on.exit(unlink(tempR));
 
-    if (!is.null(res$rxsPurlingOutput[[filename]])) {
+    print(filename);
+
+    if (filename %in% names (res$rxsPurlingOutput)) {
       warning("RXS purling output was already stored for file '",
               filename,
               "'. Storing existing version as 'BACKUP-",
