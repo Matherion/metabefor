@@ -32,6 +32,10 @@ rxs_parseExtractionScripts <- function(path,
     allScripts <- unique(allScripts);
   }
 
+  res$input$allScripts <- allScripts;
+
+  print(allScripts);
+
   for (filename in allScripts) {
     ### From https://stackoverflow.com/questions/24753969/knitr-run-all-chunks-in-an-rmarkdown-document
 
