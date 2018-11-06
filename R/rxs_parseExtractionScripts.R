@@ -60,8 +60,6 @@ rxs_parseExtractionScripts <- function(path,
 
     ### Extract R chunks and write them to another file
     res$rxsPurlingOutput[[filename]] <-
-      c(res$rxsPurlingOutput[[filename]],
-
       capture.output(tryCatch(knitr::purl(file.path(path,
                                                     filename),
                                           output=tempR,
@@ -75,8 +73,7 @@ rxs_parseExtractionScripts <- function(path,
                                            "\n\n",
                                            collapse="\n"));
                                 invisible(e);
-                              }))
-      );
+                              }));
 
     if (any(grepl("In file '",
                     filename,
