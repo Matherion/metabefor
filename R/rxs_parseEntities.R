@@ -17,15 +17,15 @@ rxs_parseEntities <- function(entities,
     !(dataFrameNetwork[[eC$parentCol]] %in% c(rootName, dataFrameNetwork[[eC$identifierCol]]));
   if (any(nonExistentParents)) {
     stop("The items with the following identifiers have a parent that ",
-         "cannot be found in the list of parents: ",
-         paste0(paste0("'",
+         "cannot be found in the list of parents:\n\n",
+         paste0(paste0("  - '",
                        dataFrameNetwork[[eC$identifierCol]][nonExistentParents],
                        "' with parent '",
                        dataFrameNetwork$Parent[nonExistentParents],
                        "' on line ",
                        which(entities[[eC$identifierCol]] %in%
                                entities[[eC$identifierCol]][nonExistentParents])),
-                collapse=", "),
+                collapse=";\n"),
          ")!");
   }
 
