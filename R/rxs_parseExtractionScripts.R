@@ -41,6 +41,17 @@ rxs_parseExtractionScripts <- function(path,
     ### Make sure it's deleted when we're done
     on.exit(unlink(tempR));
 
+    if (!is.null(res$rxsPurlingOutput[[filename]])) {
+      warning("RXS purling output was already stored for file '",
+              filename,
+              "'. Storing existing version as 'BACKUP-",
+              filename,
+              "'.");
+      res$rxsPurlingOutput[[paste0("BACKUP-",filename)]] <-
+        res$rxsPurlingOutput[[filename]];
+      res$rxsPurlingOutput[[filename]] <- NULL;
+    }
+
     ### Extract R chunks and write them to another file
     res$rxsPurlingOutput[[filename]] <-
       capture.output(tryCatch(knitr::purl(file.path(path,
