@@ -34,7 +34,9 @@ rxs_parseExtractionScripts <- function(path,
 
   res$input$allScripts <- allScripts;
 
-  print(allScripts);
+  if (interactive()) {
+    p <- progress_estimated(length(allScripts));
+  };
 
   for (filename in allScripts) {
     ### From https://stackoverflow.com/questions/24753969/knitr-run-all-chunks-in-an-rmarkdown-document
@@ -44,8 +46,6 @@ rxs_parseExtractionScripts <- function(path,
 
     ### Make sure it's deleted when we're done
     on.exit(unlink(tempR));
-
-    print(filename);
 
     if (filename %in% names (res$rxsPurlingOutput)) {
       warning("RXS purling output was already stored for file '",
@@ -59,7 +59,7 @@ rxs_parseExtractionScripts <- function(path,
     }
 
     ### Extract R chunks and write them to another file
-    res$rxsPurlingOutput[[filename]] <-
+    purlingOutput <-
       capture.output(tryCatch(knitr::purl(file.path(path,
                                                     filename),
                                           output=tempR,
@@ -74,6 +74,13 @@ rxs_parseExtractionScripts <- function(path,
                                            collapse="\n"));
                                 invisible(e);
                               }));
+    tryCatch({res$rxsPurlingOutput[[filename]] <-
+                purlingOutput;},
+             error = function(e) {
+               stop("Error saving purling output to rxs object! The error is:\n\n",
+                    e$message,
+                    "\n\nEncountered while processing file '", filename, "'.\n");
+             });
 
     if (any(grepl("In file '",
                     filename,
@@ -86,7 +93,7 @@ rxs_parseExtractionScripts <- function(path,
       }
     } else {
       ### Run the other file with error handling
-      res$rxsOutput[[filename]] <-
+      rxsOutput <-
         capture.output(tryCatch(sys.source(tempR, envir=globalenv()),
                                 error = function(e) {
                                   cat(paste0("In file '",
@@ -98,6 +105,14 @@ rxs_parseExtractionScripts <- function(path,
                                   # cat(e$message);
                                   invisible(e);
                                 }));
+      tryCatch({res$rxsOutput[[filename]] <-
+        rxsOutput;},
+        error = function(e) {
+          stop("Error saving rxs evaluation output to rxs object! The error is:\n\n",
+               e$message,
+               "\n\nEncountered while processing file '", filename, "'.\n");
+        });
+
       if (showErrors) {
         if (any(grepl("In file '",
                       filename,
@@ -116,6 +131,11 @@ rxs_parseExtractionScripts <- function(path,
     } else {
       res$rxsTrees[[filename]] <- NA;
     }
+
+    if (interactive()) {
+      p$tick();
+    };
+
   }
 
   class(res) <- "rxs_parsedExtractionScripts";
