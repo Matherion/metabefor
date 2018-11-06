@@ -35,7 +35,7 @@ rxs_parseExtractionScripts <- function(path,
   res$input$allScripts <- allScripts;
 
   if (interactive()) {
-    p <- progress_estimated(length(allScripts));
+    p <- dplyr::progress_estimated(length(allScripts));
   };
 
   for (filename in allScripts) {
