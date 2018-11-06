@@ -25,6 +25,13 @@ rxs_parseExtractionScripts <- function(path,
   res$rxsOutput <- list();
   res$rxsTrees <- list();
 
+  if (anyDuplicated(allScripts)) {
+    warning("Warning: two rxs files with the same name found: ",
+            vecTxtQ(allScripts[duplicated(allScripts)]),
+            ".");
+    allScripts <- unique(allScripts);
+  }
+
   for (filename in allScripts) {
     ### From https://stackoverflow.com/questions/24753969/knitr-run-all-chunks-in-an-rmarkdown-document
 
