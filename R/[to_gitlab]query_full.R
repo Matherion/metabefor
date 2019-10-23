@@ -6,11 +6,26 @@ query_full <- function(inclusion,
     return(inclusion);
   }
 
-  resNode <- Node$new(queryName %||% "query");
+  resNode <- data.tree::Node$new(queryName %||% "query");
   resNode$operator <- "NOT";
 
-  resNode$AddChildNode(Clone(inclusion));
-  resNode$AddChildNode(Clone(exclusion));
+  resNode$AddChildNode(inclusion);
+
+  if (class(exclusion) == "query_conceptTerms") {
+    childName <- attr(exclusion, "conceptName");
+    resNode$AddChild(childName);
+    resNode[[childName]]$object <-
+      exclusion;
+    resNode[[childName]]$operator <-
+      attr(exclusion, "operator");
+    for (j in seq_along(exclusion)) {
+      resNode[[childName]]$AddChild(exclusion[j]);
+    }
+  } else if (class(exclusion) == "query_requiredConcepts") {
+    AddChildNode(exclusion);
+  } else {
+    stop("Argument `exclusion` has an invalid class!");
+  }
 
   SetGraphStyle(resNode, rankdir = "LR");
   SetEdgeStyle(resNode,
@@ -23,6 +38,7 @@ query_full <- function(inclusion,
                shape = "box",
                fillcolor = "#DDDDDD",
                fontname = "helvetica");
+
   resNode$Do(function(node)
     SetEdgeStyle(node,
                  style = case_when(node$parent$operator=="OR" ~ "dotted",
@@ -30,6 +46,7 @@ query_full <- function(inclusion,
                                    node$parent$operator=="NOT" ~ "dashed",
                                    TRUE ~ "solid")),
     traversal="level");
+
 
   attr(resNode, "queryName") <- queryName;
   class(resNode) <- c('query_full', class(resNode));
