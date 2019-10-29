@@ -31,11 +31,11 @@ rxs_fromSpecifications <- function(gs_url = NULL,
                        ### no definitions are loaded
   if (!is.null(gs_url)) {
     tryCatch({
-      gsObject <- gs_url(gs_url);
-      entities <- gs_read(gsObject, ws = ws$entities);
-      valueTemplates <- gs_read(gsObject, ws = ws$valueTemplates);
+      gsObject <- googlesheets::gs_url(gs_url);
+      entities <- googlesheets::gs_read(gsObject, ws = ws$entities);
+      valueTemplates <- googlesheets::gs_read(gsObject, ws = ws$valueTemplates);
       if (!is.null(ws$definitions)) {
-        definitions <- gs_read(gsObject, ws = ws$definitions);
+        definitions <- googlesheets::gs_read(gsObject, ws = ws$definitions);
       }
       if (!silent) {
         cat("Successfully read the extraction script specifications from Google sheets.\n");
@@ -48,7 +48,8 @@ rxs_fromSpecifications <- function(gs_url = NULL,
                }
                if (getOption("metabefor.debug", FALSE)) {
                  ufs::cat0("Error message:\n  ",
-                           e$message);
+                           e$message,
+                           "\n");
                }
              });
   }

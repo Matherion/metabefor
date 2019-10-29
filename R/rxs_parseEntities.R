@@ -10,7 +10,7 @@ rxs_parseEntities <- function(entities,
 
   if (getOption("metabefor.debug", FALSE)) {
     ufs::cat0("\nrxs_parseEntities read an entity spreadsheet with the following columns: ",
-              ufs::vecTxtQ(names(dataFrameNetwork)), ".");
+              ufs::vecTxtQ(names(dataFrameNetwork)), ".\n");
   }
 
   ### Add a root entity for the entities without one
