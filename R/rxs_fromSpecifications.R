@@ -46,6 +46,10 @@ rxs_fromSpecifications <- function(gs_url = NULL,
                  cat("You specified a google sheet, but I have problems",
                      "accessing it - trying to access local files.\n");
                }
+               if (getOption("metabefor.debug", FALSE)) {
+                 ufs::cat0("Error message:\n  ",
+                           e$message);
+               }
              });
   }
 
