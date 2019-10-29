@@ -8,6 +8,11 @@ rxs_parseEntities <- function(entities,
                            unique(c(eC$identifierCol,
                                     eC$parentCol, names(entities)))]);
 
+  if (getOption("metabefor.debug", FALSE)) {
+    ufs::cat0("\nrxs_parseEntities read an entity spreadsheet with the following columns: ",
+              ufs::vecTxtQ(names(dataFrameNetwork)), ".");
+  }
+
   ### Add a root entity for the entities without one
   dataFrameNetwork[[eC$parentCol]][is.na(dataFrameNetwork[[eC$parentCol]])] <-
     rootName;
@@ -30,7 +35,7 @@ rxs_parseEntities <- function(entities,
   }
 
   ### Convert to tree
-  extractionScriptTree <- FromDataFrameNetwork(dataFrameNetwork);
+  extractionScriptTree <- data.tree::FromDataFrameNetwork(dataFrameNetwork);
 
   ### Check for unique names
   if (!data.tree::AreNamesUnique(extractionScriptTree)) {
